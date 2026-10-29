@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horoscope – Free Daily, Weekly &amp; Monthly Horoscopes</title>
+<meta name="description" content="Free daily, weekly and monthly horoscopes for all 12 zodiac signs, calculated from real planetary positions, with compatibility and an astrology encyclopedia. English and Finnish.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Millaceedee">
+<meta name="theme-color" content="#1d1236">
+
+<link rel="canonical" href="https://millaceedee.github.io/Horoscope/">
+
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="images/favicon-48.png">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Horoscope">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="fi_FI">
+<meta property="og:title" content="Horoscope – Free Daily, Weekly &amp; Monthly Horoscopes">
+<meta property="og:description" content="Daily, weekly and monthly horoscopes for all 12 signs, calculated from the real sky. Päivän, viikon ja kuukauden horoskoopit.">
+<meta property="og:url" content="https://millaceedee.github.io/Horoscope/">
+<meta property="og:image" content="https://millaceedee.github.io/Horoscope/images/preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zodiac wheel with the twelve signs and planets on a purple starry background">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Horoscope – Free Daily, Weekly &amp; Monthly Horoscopes">
+<meta name="twitter:description" content="Daily, weekly and monthly horoscopes for all 12 signs, calculated from the real sky.">
+<meta name="twitter:image" content="https://millaceedee.github.io/Horoscope/images/preview.png">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Horoscope","alternateName":"Horoskooppi","url":"https://millaceedee.github.io/Horoscope/","description":"Free daily, weekly and monthly horoscopes calculated from real planetary positions, with sign pages, compatibility and an astrology encyclopedia.","applicationCategory":"LifestyleApplication","operatingSystem":"Any","inLanguage":["en","fi"],"isAccessibleForFree":true,"image":"https://millaceedee.github.io/Horoscope/images/preview.png","author":{"@type":"Person","name":"Millaceedee","url":"https://github.com/Millaceedee/"},"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"}}
+</script>
+<style>
+:root{color-scheme:dark;--night:#150d26;--plum:#241640;--plum2:#33215a;--line:#4d3779;--gold:#dcb36c;--gold2:#f1d595;--ink:#efe6f7;--dim:#a898c2;--rose:#d17aa4}
+*{box-sizing:border-box;margin:0}
+body{min-height:100dvh;color:var(--ink);font:16px/1.65 "Palatino Linotype",Palatino,Georgia,serif;padding:20px 14px 60px}
+html{background:#1d1236}
+#space{position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none}
+body::before,body::after{content:"";position:fixed;inset:-15%;z-index:-1;pointer-events:none}
+body::before{background:radial-gradient(ellipse 55% 45% at 25% 20%,#5a3d8f 0,transparent 70%),radial-gradient(ellipse 50% 40% at 80% 70%,#4a2f7c 0,transparent 70%),radial-gradient(ellipse 60% 50% at 50% 100%,#6a4a9c 0,transparent 70%);filter:blur(30px);opacity:.75;animation:mist 38s ease-in-out infinite alternate}
+body::after{background:radial-gradient(ellipse 45% 35% at 70% 15%,rgba(220,179,108,.16) 0,transparent 70%),radial-gradient(ellipse 50% 40% at 15% 80%,rgba(209,122,164,.14) 0,transparent 70%);filter:blur(18px);animation:mist2 55s ease-in-out infinite alternate}
+@keyframes mist{from{transform:translate3d(-4%,-2%,0) scale(1)}to{transform:translate3d(5%,4%,0) scale(1.15)}}
+@keyframes mist2{from{transform:translate3d(4%,3%,0) scale(1.1)}to{transform:translate3d(-5%,-3%,0) scale(1)}}
+@media(prefers-reduced-motion:reduce){body::before,body::after{animation:none}}
+header,main,footer{max-width:1040px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+h1{font-weight:400;font-size:clamp(28px,5vw,44px);letter-spacing:.16em;color:var(--gold2);line-height:1.1}
+h1 small{display:block;font-size:.34em;letter-spacing:.04em;color:var(--dim);margin-top:8px}
+h2{font-weight:400;color:var(--gold);letter-spacing:.06em;font-size:20px;margin-bottom:6px}
+h3{font-weight:400;color:var(--gold);font-size:16px;letter-spacing:.05em;margin:14px 0 4px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.lang,.tab,.chip,.seg button{background:none;border:1px solid var(--line);border-radius:3px;padding:5px 14px;color:var(--dim)}
+.lang:hover,.tab:hover,.chip:hover{color:var(--ink);border-color:var(--gold)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab.on,.chip.on,.seg button.on{background:var(--gold);border-color:var(--gold);color:#241408;font-weight:700}
+.signs{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin-bottom:14px}
+.chip{padding:8px 4px;text-align:center;font-size:13px;line-height:1.3}
+.chip b{display:block;font-size:24px;font-weight:400;color:var(--gold)}
+.chip.on b{color:#241408}
+.bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.seg{display:flex}.seg button{border-radius:0}.seg button:first-child{border-radius:3px 0 0 3px}.seg button:last-child{border-radius:0 3px 3px 0}
+input,select{background:#0f0820;border:1px solid var(--line);border-radius:3px;padding:6px 9px;color-scheme:dark}
+.grid{display:grid;gap:18px}
+@media(min-width:860px){.grid.two{grid-template-columns:330px minmax(0,1fr);align-items:start}}
+.card{background:linear-gradient(170deg,var(--plum2),var(--plum));border:1px solid var(--line);border-radius:16px 3px 16px 3px;padding:18px 20px}
+.big{font-size:54px;color:var(--gold);line-height:1;margin-bottom:4px}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;font-size:14.5px;margin:10px 0}.meta dt{color:var(--dim)}.meta dd{margin:0}
+.star{color:var(--gold);letter-spacing:2px}.star i{color:#5a4682;font-style:normal}
+.lucky{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.lucky span{border:1px solid var(--line);border-radius:20px;padding:2px 12px;font-size:14px}
+.q{font-style:italic;color:var(--gold2);border-left:2px solid var(--gold);padding-left:12px;margin:12px 0}
+.note{font-size:13px;color:var(--dim);font-style:italic;margin-top:14px}
+.meter{height:8px;background:#0f0820;border-radius:4px;overflow:hidden;margin:2px 0 8px}.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--rose),var(--gold))}
+details{border-top:1px solid var(--line);padding:9px 0}summary{cursor:pointer;color:var(--gold)}
+svg text{font-family:inherit}
+footer{margin-top:28px;text-align:center;font-size:13px;color:var(--dim)}footer a{color:inherit}
+</style>
+</head>
+<body>
+<canvas id="space" aria-hidden="true"></canvas>
+<header>
+<h1 id="title">Horoscope<small id="sub"></small></h1>
+<button class="lang" id="lb" type="button">Suomeksi</button>
+</header>
+<main>
+<nav class="tabs" id="tabs" aria-label="Sections"></nav>
+<section id="view" aria-live="polite"></section>
+</main>
+<footer id="credit"></footer>
+<script>
+/* Slowly drifting starfield */
+(function(){
+var c=document.getElementById('space'),x=c.getContext('2d'),W,H,dpr,st=[],last=0,
+ still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches,
+ L=[{n:1,sp:3,r:.7,a:.45},{n:.45,sp:7,r:1.1,a:.7},{n:.16,sp:14,r:1.7,a:.95}],
+ C=['241,213,149','239,230,247','190,170,235','255,255,255'];
+function init(){
+ dpr=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+ c.width=W*dpr;c.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0);
+ var base=Math.round(W*H/5500);st=[];
+ L.forEach(function(l,li){for(var i=0;i<base*l.n;i++)st.push({x:Math.random()*W,y:Math.random()*H,l:li,
+  c:C[Math.random()*C.length|0],p:Math.random()*6.28,t:.4+Math.random()*1.2,s:.6+Math.random()*.8})});
+ draw(0);
+}
+function draw(dt){
+ x.clearRect(0,0,W,H);
+ var now=performance.now()/1000;
+ for(var i=0;i<st.length;i++){var s=st[i],l=L[s.l];
+  s.x+=l.sp*dt*.8;s.y+=l.sp*dt*.35;
+  if(s.x>W+4)s.x=-4;if(s.y>H+4)s.y=-4;
+  var tw=.65+.35*Math.sin(now*s.t+s.p),a=l.a*tw*s.s>1?1:l.a*tw*s.s,r=l.r*s.s;
+  x.fillStyle='rgba('+s.c+','+a+')';
+  x.beginPath();x.arc(s.x,s.y,r,0,6.2832);x.fill();
+  if(s.l===2){x.fillStyle='rgba('+s.c+','+a*.18+')';x.beginPath();x.arc(s.x,s.y,r*3.2,0,6.2832);x.fill();}
+ }
+}
+function loop(t){var dt=Math.min((t-last)/1000||0,.1);last=t;draw(dt);requestAnimationFrame(loop)}
+init();addEventListener('resize',init);
+if(!still)requestAnimationFrame(loop);
+})();
+</script>
+<script src="js/astronomy.js"></script>
+<script src="js/horoscope.js"></script>
+</body>
+</html>
