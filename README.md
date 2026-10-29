@@ -1,5 +1,7 @@
 # Horoscope
 
+![Horoscope preview](images/preview.png)
+
 Horoscopes calculated from the real sky.
 
 An interactive horoscope application that combines real astronomical planetary positions with traditional astrology. Explore daily, weekly and monthly horoscopes based on the actual positions of celestial bodies.
