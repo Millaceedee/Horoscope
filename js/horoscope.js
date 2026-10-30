@@ -11,7 +11,6 @@ const SIGN_START = ['03-21', '04-20', '05-21', '06-21', '07-23', '08-23', '09-23
 const RUL = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [2, 2], [1, 1], [9, 0], [5, 5], [6, 6], [7, 6], [8, 5]];
 const LUCKY_N = [9, 6, 5, 2, 1, 5, 6, 8, 3, 8, 4, 7];
 const LUCKY_D = [2, 5, 3, 1, 0, 3, 5, 2, 4, 6, 6, 4];
-const GOOD = [1, 2, 5, 9, 10, 11], HARD = [6, 8, 12];
 const ASP = [[0, 7], [60, 5], [90, 6], [120, 6], [180, 7]];
 
 const D = {
@@ -229,6 +228,11 @@ const D = {
       ["How it works", "Planet positions are calculated by astronomy; the meanings are drawn from rule-based astrological tradition (modern psychological and classical symbolism). It is symbolic reflection, not a prediction."]
     ],
     disc: "Astrological interpretation is symbolic and intended for reflection and entertainment, not a scientific prediction.",
+    datesNote: "Sign dates are approximate; the Sun changes signs at a slightly different time each year.",
+    compatNote: "Percentages are illustrative sign-based scores, not measured probabilities or a comparison of full birth charts.",
+    closest: "Closest",
+    exact: "Exact",
+    localTimeNote: "Times are shown in your browser’s local time zone.",
     credit: "<a href=\"https://github.com/Millaceedee/\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:inherit\">Millaceedee</a> © 2026. Licensed under the MIT License. Astronomical calculations: <a href=\"https://github.com/cosinekitty/astronomy\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:inherit\">Astronomy Engine</a> by Don Cross."
   },
   fi: {
@@ -456,48 +460,199 @@ const D = {
       ["Miten tämä toimii", "Planeettojen sijainnit lasketaan tähtitieteellisesti; merkitykset tulevat sääntöpohjaisesta astrologisesta perinteestä (modernit psykologiset ja perinteiset symbolit). Kyse on symbolisesta pohdinnasta, ei ennustuksesta."]
     ],
     disc: "Astrologinen tulkinta on symbolista ja tarkoitettu pohdintaan ja viihteeksi, ei tieteelliseksi ennustukseksi.",
+    datesNote: "Merkkien päivämäärät ovat suuntaa-antavia; Aurinko vaihtaa merkkiä hieman eri aikaan eri vuosina.",
+    compatNote: "Prosentit ovat suuntaa-antavia, merkkeihin perustuvia pisteitä. Ne eivät ole mitattuja todennäköisyyksiä eivätkä kokonaisten syntymäkarttojen vertailua.",
+    closest: "Lähimmillään",
+    exact: "Tarkka",
+    localTimeNote: "Ajat näytetään selaimen paikallisessa aikavyöhykkeessä.",
     credit: "<a href=\"https://github.com/Millaceedee/\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:inherit\">Millaceedee</a> © 2026. Lisensoitu MIT-lisenssillä. Tähtitieteelliset laskelmat: <a href=\"https://github.com/cosinekitty/astronomy\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:inherit\">Astronomy Engine</a>, Don Cross."
   }
 };
 
 const nm = x => ((x % 360) + 360) % 360;
+const signedAngle = x => ((x + 540) % 360) - 180;
+const localNoon = date => new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12);
+const addLocalDays = (date, days) => {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12);
+  d.setDate(d.getDate() + days);
+  return d;
+};
 const lon = (b, d) => {
   const v = b === "Moon" ? AE.GeoMoon(d) : AE.GeoVector(AE.Body[b], d, true);
   return AE.Ecliptic(v).elon;
 };
 
+// Positions are geocentric ecliptic longitudes in the tropical zodiac.
+// Central differences avoid the one-sided direction error near stations.
 function sky(date) {
-  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12);
-  const d2 = new Date(d.getTime() + 864e5);
+  const d = localNoon(date);
+  const before = new Date(d.getTime() - 6 * 3600e3);
+  const after = new Date(d.getTime() + 6 * 3600e3);
   return BODY.map((b, i) => {
-    const l = nm(lon(b, d)), l2 = nm(lon(b, d2));
-    return { i, lon: l, sign: Math.floor(l / 30), retro: i > 1 && ((l2 - l + 540) % 360 - 180) < 0 };
+    const l = nm(lon(b, d));
+    const speed = signedAngle(lon(b, after) - lon(b, before)) / 0.5;
+    return {
+      i, lon: l, sign: Math.floor(l / 30), speed,
+      retro: i > 1 && speed < -0.0001,
+      stationary: i > 1 && Math.abs(speed) < 0.03
+    };
   });
 }
 
-function aspects(pl, skipMoon) {
+function allAspects(pl, skipMoon) {
   const out = [];
   for (let a = 0; a < pl.length; a++) {
     for (let b = a + 1; b < pl.length; b++) {
       if (skipMoon && (a === 1 || b === 1)) continue;
-      const diff = Math.abs(nm(pl[a].lon - pl[b].lon + 180) - 180);
+      const diff = Math.abs(signedAngle(pl[a].lon - pl[b].lon));
       ASP.forEach(([ang, orb], k) => {
         const o = Math.abs(diff - ang);
-        if (o <= orb) out.push({ a, b, k, o });
+        if (o <= orb) out.push({ a, b, k, o, angle: diff });
       });
     }
   }
-  return out.sort((x, y) => x.o - y.o).slice(0, 3);
+  return out.sort((x, y) => x.o - y.o);
+}
+
+function angleDiffAt(a, b, time) {
+  return Math.abs(signedAngle(lon(BODY[a], time) - lon(BODY[b], time)));
+}
+
+function aspectOrbAt(a, b, angle, time) {
+  return Math.abs(angleDiffAt(a, b, time) - angle);
+}
+
+// Search the whole interval at 3-hour resolution, then refine the closest
+// point with golden-section minimization. Returns the closest timestamp.
+function closestAspect(a, b, angle, start, end) {
+  const step = 3 * 3600e3;
+  let bestMs = start.getTime(), bestOrb = Infinity;
+  for (let ms = start.getTime(); ms <= end.getTime(); ms += step) {
+    const orb = aspectOrbAt(a, b, angle, new Date(ms));
+    if (orb < bestOrb) { bestOrb = orb; bestMs = ms; }
+  }
+  const lo0 = Math.max(start.getTime(), bestMs - step);
+  const hi0 = Math.min(end.getTime(), bestMs + step);
+  let lo = lo0, hi = hi0;
+  const gr = (Math.sqrt(5) - 1) / 2;
+  let x1 = hi - gr * (hi - lo), x2 = lo + gr * (hi - lo);
+  let f1 = aspectOrbAt(a, b, angle, new Date(x1));
+  let f2 = aspectOrbAt(a, b, angle, new Date(x2));
+  for (let i = 0; i < 36; i++) {
+    if (f1 > f2) {
+      lo = x1; x1 = x2; f1 = f2;
+      x2 = lo + gr * (hi - lo);
+      f2 = aspectOrbAt(a, b, angle, new Date(x2));
+    } else {
+      hi = x2; x2 = x1; f2 = f1;
+      x1 = hi - gr * (hi - lo);
+      f1 = aspectOrbAt(a, b, angle, new Date(x1));
+    }
+  }
+  const ms = (lo + hi) / 2;
+  return { date: new Date(ms), o: aspectOrbAt(a, b, angle, new Date(ms)) };
+}
+
+// Time span around the exact moment when the orb stays within maxOrb degrees.
+function aspectWindow(a, b, angle, center, maxOrb) {
+  const step = 3 * 3600e3, limit = 20 * 86400e3, c = center.getTime();
+  let lo = c, hi = c;
+  while (lo > c - limit && aspectOrbAt(a, b, angle, new Date(lo - step)) <= maxOrb) lo -= step;
+  while (hi < c + limit && aspectOrbAt(a, b, angle, new Date(hi + step)) <= maxOrb) hi += step;
+  return { from: new Date(lo), to: new Date(hi) };
+}
+
+function periodAspects(start, days, skipMoon) {
+  const startTime = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + days);
+  const out = [];
+  for (let a = 0; a < BODY.length; a++) {
+    for (let b = a + 1; b < BODY.length; b++) {
+      if (skipMoon && (a === 1 || b === 1)) continue;
+      ASP.forEach(([angle, maxOrb], k) => {
+        const closest = closestAspect(a, b, angle, startTime, new Date(end.getTime() - 1));
+        if (closest.o <= maxOrb) out.push({ a, b, k, angle, o: closest.o, date: closest.date });
+      });
+    }
+  }
+  return out.sort((x, y) => x.o - y.o).slice(0, 6).map(x => ({
+    ...x, win: aspectWindow(x.a, x.b, x.angle, x.date, 2)
+  }));
+}
+
+function aspects(pl, skipMoon, date) {
+  if (!date) return allAspects(pl, skipMoon).slice(0, 3);
+  return periodAspects(date, 1, skipMoon).slice(0, 3);
+}
+
+function findSignIngress(planet, loDate, hiDate, oldSign) {
+  let lo = loDate.getTime(), hi = hiDate.getTime();
+  for (let i = 0; i < 42; i++) {
+    const mid = (lo + hi) / 2;
+    const sign = Math.floor(nm(lon(BODY[planet], new Date(mid))) / 30);
+    if (sign === oldSign) lo = mid;
+    else hi = mid;
+  }
+  return new Date(hi);
+}
+
+function periodChanges(start, days) {
+  const changes = [];
+  const startTime = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + days);
+  const step = 6 * 3600e3;
+  for (let i = 0; i < BODY.length; i++) {
+    if (i === 1) continue;
+    let previousTime = new Date(startTime.getTime());
+    let previousSign = Math.floor(nm(lon(BODY[i], previousTime)) / 30);
+    for (let ms = previousTime.getTime() + step; ms <= end.getTime() + step; ms += step) {
+      const time = new Date(Math.min(ms, end.getTime()));
+      const currentSign = Math.floor(nm(lon(BODY[i], time)) / 30);
+      if (currentSign !== previousSign) {
+        const exact = findSignIngress(i, previousTime, time, previousSign);
+        changes.push({ type: "sign", planet: i, from: previousSign, to: currentSign, date: exact });
+      }
+      previousTime = time;
+      previousSign = currentSign;
+      if (ms >= end.getTime()) break;
+    }
+  }
+  // Detect stations by locating a change in the sign of daily longitudinal speed.
+  for (let i = 2; i < BODY.length; i++) {
+    let prev = new Date(startTime.getTime());
+    let prevSpeed = signedAngle(lon(BODY[i], new Date(prev.getTime() + 6 * 3600e3)) -
+      lon(BODY[i], new Date(prev.getTime() - 6 * 3600e3)));
+    for (let ms = prev.getTime() + 12 * 3600e3; ms <= end.getTime(); ms += 12 * 3600e3) {
+      const t = new Date(ms);
+      const speed = signedAngle(lon(BODY[i], new Date(ms + 6 * 3600e3)) -
+        lon(BODY[i], new Date(ms - 6 * 3600e3)));
+      if ((prevSpeed < 0 && speed >= 0) || (prevSpeed > 0 && speed <= 0)) {
+        let lo = prev.getTime(), hi = ms;
+        const retroBefore = prevSpeed < 0;
+        for (let n = 0; n < 36; n++) {
+          const mid = (lo + hi) / 2;
+          const v = signedAngle(lon(BODY[i], new Date(mid + 6 * 3600e3)) -
+            lon(BODY[i], new Date(mid - 6 * 3600e3)));
+          if ((v < 0) === retroBefore) lo = mid; else hi = mid;
+        }
+        changes.push({ type: "motion", planet: i, retro: !retroBefore, date: new Date((lo + hi) / 2) });
+      }
+      prev = t; prevSpeed = speed;
+    }
+  }
+  return changes.sort((a, b) => a.date - b.date);
 }
 
 const fmtD = (d, lang) => lang === "fi" ? `${d.getDate()}.${d.getMonth() + 1}.` : `${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]} ${d.getDate()}`;
+const fmtTime = (d, lang) => `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+const fmtFull = (d, lang) => lang === "fi" ? `${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}` : `${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 
 function moonEvents(start, days) {
-  const end = new Date(start.getTime() + days * 864e5), out = [];
-  let q = AE.SearchMoonQuarter(start);
+  const end = addLocalDays(start, days), out = [];
+  let q = AE.SearchMoonQuarter(new Date(start.getFullYear(), start.getMonth(), start.getDate()));
   for (let n = 0; n < 8 && q.time.date < end; n++) {
     const d = q.time.date;
-    out.push({ date: d, q: q.quarter, idx: q.quarter * 2, sign: Math.floor(lon("Moon", d) / 30) });
+    if (d >= start) out.push({ date: d, q: q.quarter, idx: q.quarter * 2, sign: Math.floor(lon("Moon", d) / 30) });
     q = AE.NextMoonQuarter(q);
   }
   return out;
@@ -514,16 +669,23 @@ const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 function stars(n) { return '<span class="star" aria-label="' + n + '/5">' + "★".repeat(n) + '<i>' + "★".repeat(5 - n) + "</i></span>"; }
 
 function compat(a, b) {
+  // Sign-only compatibility is a symbolic comparison, not a measured probability.
   const dist = Math.min((a - b + 12) % 12, (b - a + 12) % 12);
-  const base = [70, 55, 80, 58, 92, 50, 75][dist];
-  const ea = a % 4, eb = b % 4, same = ea === eb, good = (ea + eb) % 2 === 0 && !same;
+  const ea = a % 4, eb = b % 4;
+  const sameElement = ea === eb;
+  const complementary = (ea === 0 && eb === 2) || (ea === 2 && eb === 0) ||
+    (ea === 1 && eb === 3) || (ea === 3 && eb === 1);
+  const elementScore = sameElement ? 84 : complementary ? 80 : 62;
+  const modalityA = a % 3, modalityB = b % 3;
+  const modalityScore = modalityA === modalityB ? 72 : 82;
+  const communicationScore = clamp(Math.round((elementScore * 0.55) + (modalityScore * 0.45) + (a === b ? 3 : 0)), 35, 98);
   return {
     dist,
-    rel: same ? 0 : good ? 1 : 2,
+    rel: sameElement ? 0 : complementary ? 1 : 2,
     s: [
-      clamp(base + (good ? 5 : 0), 35, 98),
-      clamp(base + (dist % 2 === 0 ? 5 : -3), 35, 98),
-      clamp(base + (ea === 2 || ea === 0 ? 6 : 0) + (a === b ? 4 : 0), 35, 98)
+      clamp(Math.round(elementScore + (modalityA === modalityB ? -3 : 3)), 35, 98),
+      clamp(Math.round((elementScore + modalityScore) / 2), 35, 98),
+      communicationScore
     ]
   };
 }
@@ -554,7 +716,7 @@ function signPicker(key, T) {
     `<button type="button" class="chip${S[key] === i ? ' on' : ''}" aria-pressed="${S[key] === i}" data-k="${key}" data-v="${i}"><b>${g}</b>${T.signs[i]}</button>`).join('') + '</div>';
 }
 
-function forecast(T, pl, sg, show, key, pi, moon, per) {
+function forecast(T, pl, sg, show, key, pi, moon, per, activeAspects, changes) {
   const hv = hash(key), n = [1, 2, 3][per], pool = show.filter(i => i !== 1 || per === 0);
   const leads = [];
   for (let k = 0; k < n && k < pool.length; k++) leads.push(pool[(hv + k * 3) % pool.length]);
@@ -566,45 +728,112 @@ function forecast(T, pl, sg, show, key, pi, moon, per) {
     return (k === 0 ? T.fcOpen[sg] + " " : "") + T.fcPlanet[i] + (again ? "" : " " + T.fcHouse[hh - 1]);
   });
   const tail = [T.fcMoon[pi]];
-  const A = aspects(pl, per !== 0)[0];
+  const A = activeAspects[0];
   if (A) tail.push(T.fcBeneath(`${T.pl[A.a]} (${T.kw[A.a]})`, `${T.pl[A.b]} (${T.kw[A.b]})`, T.fcAsp[A.k]));
+  if (changes.length) {
+    const c = changes[0];
+    if (c.type === "sign") {
+      tail.push(T.pl[c.planet] + (S.lang === "fi" ? ` siirtyy ${T.signs[c.to]}-merkkiin ${fmtD(c.date, S.lang)}.` : ` enters ${T.signs[c.to]} on ${fmtD(c.date, S.lang)}.`));
+    }
+  }
   tail.push(T.fcClose[sg]);
   para.push(tail.join(" "));
   return para.map(x => `<p>${x}</p>`).join("");
 }
 
+function scoreArea(planet, area, sign, pl) {
+  const hh = houseOf(planet.sign, sign);
+  const favourable = [
+    [5, 7, 11],       // Venus: love, pleasure, relationships
+    [1, 5, 10],       // Mars: initiative, creativity, career
+    [2, 9, 11],       // Jupiter: resources, learning, networks
+    [1, 6, 10]        // Saturn: discipline, routines, long-term work
+  ][area];
+  const difficult = [
+    [6, 8, 12], [4, 7, 12], [3, 6, 8], [5, 7, 11]
+  ][area];
+  let score = 3 + (favourable.includes(hh) ? 1 : 0) - (difficult.includes(hh) ? 1 : 0);
+  if (planet.retro) score -= 1;
+  if (planet.stationary) score -= 1;
+  allAspects(pl, false).forEach(a => {
+    if (a.a !== planet.i && a.b !== planet.i) return;
+    // Soft aspects help; hard aspects call for more care. Conjunctions are neutral
+    // unless the other planet is traditionally benefic or malefic.
+    if (a.k === 1 || a.k === 3) score += 0.5;
+    if (a.k === 2 || a.k === 4) score -= 0.5;
+    const other = a.a === planet.i ? a.b : a.a;
+    if (a.k === 0 && (other === 5 || other === 3)) score += 0.5;
+    if (a.k === 0 && (other === 4 || other === 6)) score -= 0.5;
+  });
+  return clamp(Math.round(score), 1, 5);
+}
+
+function scoreAreaForPeriod(area, sign, start, days, midpointSky) {
+  if (days === 1) return scoreArea(midpointSky[[3, 4, 5, 6][area]], area, sign, midpointSky);
+  let total = 0;
+  for (let day = 0; day < days; day++) {
+    const pl = sky(addLocalDays(start, day));
+    total += scoreArea(pl[[3, 4, 5, 6][area]], area, sign, pl);
+  }
+  return clamp(Math.round(total / days), 1, 5);
+}
+
+function bestDay(start, days, sign) {
+  let best = { date: start, score: -Infinity };
+  for (let day = 0; day < days; day++) {
+    const date = addLocalDays(start, day), pl = sky(date);
+    const score = [3, 4, 5, 6].reduce((sum, idx, area) => sum + scoreArea(pl[idx], area, sign, pl), 0);
+    if (score > best.score) best = { date, score };
+  }
+  return best.date;
+}
+
 function reading(T) {
   const base = new Date(S.date.getFullYear(), S.date.getMonth(), S.date.getDate());
-  const shift = [0, 3, 15][S.per], mid = new Date(base.getTime() + shift * 864e5);
+  const days = [1, 7, 30][S.per];
+  const mid = addLocalDays(base, Math.floor((days - 1) / 2));
   const pl = sky(mid), sg = S.sign, key = iso(base) + sg + S.per;
   const show = [[1, 2, 3, 4], [0, 2, 3, 4], [0, 3, 4, 5, 6]][S.per];
-  const moon = pl[1], ph = AE.MoonPhase(new Date(mid.getFullYear(), mid.getMonth(), mid.getDate(), 12)), pi = Math.floor(nm(ph + 22.5) / 45) % 8;
-  const ev = S.per === 0 ? [] : moonEvents(base, [0, 7, 30][S.per]);
+  const moon = pl[1], ph = AE.MoonPhase(localNoon(mid)), pi = Math.floor(nm(ph + 22.5) / 45) % 8;
+  const ev = S.per === 0 ? [] : moonEvents(base, days);
   const fpi = ev.length ? (ev.find(e => e.q === 0 || e.q === 2) || ev[0]).idx : pi;
-  const rng = S.per === 0 ? iso(base) : iso(base) + " – " + iso(new Date(base.getTime() + [0, 6, 29][S.per] * 864e5));
+  const activeAspects = S.per === 0 ? aspects(pl, false, base) : periodAspects(base, days, true);
+  const changes = S.per === 0 ? [] : periodChanges(base, days);
+  const end = addLocalDays(base, days - 1);
+  const rng = S.per === 0 ? iso(base) : iso(base) + " – " + iso(end);
   let h = `<div class="grid two"><div class="card"><div style="max-width:300px;margin:auto">${wheel(pl, sg, T)}</div><p class="note" style="text-align:center">${T.signs[sg]} ${SG[sg]}</p></div><div class="card">`;
   h += `<h2>${SG[sg]} ${T.signs[sg]} · ${T.per[S.per]} · ${rng}</h2>`;
   h += `<p><b>${T.themeL}:</b> ${T.theme[houseOf(moon.sign, sg) - 1]}</p><p class="q">${T.ques[sg][hash(key) % 3]}</p>`;
   if (!ev.length) h += `<p>${PG[1]} ${T.moonIn(T.signs[moon.sign], T.phase[pi].toLowerCase())} ${T.phaseT[pi]}</p>`;
   else h += `<h3>${T.moonL}</h3>` + ev.map(e => `<p>${PG[1]} <b>${fmtD(e.date, S.lang)}</b> – ${T.phase[e.idx]} (${T.signs[e.sign]}). ${T.phaseT[e.idx]}</p>`).join("");
-  h += `<h3>${T.sky}</h3>`;
+  h += `<h3>${T.sky}${S.per === 0 ? "" : S.lang === "fi" ? " (jakson keskikohta)" : " (period midpoint)"}</h3>`;
   show.forEach(i => {
     const p = pl[i], hh = houseOf(p.sign, sg);
-    h += `<p>${T.pline(PG[i], T.pl[i], T.signs[p.sign], T.hs(T.ord(hh), T.house[hh - 1]))} ${T.adv[hh - 1]}${p.retro ? T.retroP[i] : ""}</p>`;
+    h += `<p>${T.pline(PG[i], T.pl[i], T.signs[p.sign], T.hs(T.ord(hh), T.house[hh - 1]))} ${T.adv[hh - 1]}${p.retro ? T.retroP[i] : ""}${p.stationary ? (S.lang === "fi" ? " Planeetta on lähes pysähdyksissä." : " The planet is near a station.") : ""}</p>`;
   });
-  aspects(pl, S.per !== 0).forEach(x => {
+  if (changes.length) {
+    h += `<h3>${S.lang === "fi" ? "Muutokset jakson aikana" : "Changes during the period"}</h3>`;
+    changes.forEach(c => {
+      const date = `${fmtD(c.date, S.lang)} ${fmtTime(c.date, S.lang)}`;
+      if (c.type === "sign") h += `<p><b>${date}</b> · ${T.pl[c.planet]}: ${T.signs[c.from]} → ${T.signs[c.to]}</p>`;
+      else h += `<p><b>${date}</b> · ${T.pl[c.planet]} ${c.retro ? (S.lang === "fi" ? "alkaa perääntyä" : "turns retrograde") : (S.lang === "fi" ? "päättää perääntymisen" : "turns direct")}</p>`;
+    });
+  }
+  if (changes.length || activeAspects.length) h += `<p class="note">${T.localTimeNote}</p>`;
+  activeAspects.forEach(x => {
     const A = pl[x.a], B = pl[x.b];
-    h += `<p>${PG[A.i]} ${T.pl[A.i]} ${T.aspN[x.k]} ${PG[B.i]} ${T.plC ? T.plC[B.i][T.aspC[x.k]] : T.pl[B.i]}${T.aspPost ? T.aspPost[x.k] : ""}: ${T.kw[A.i]} ↔ ${T.kw[B.i]} – ${T.aspT[x.k]}</p>`;
+    const label = x.o < 0.01 ? T.exact : T.closest;
+    const dateLabel = x.date ? `<span class="note">${label} ${fmtD(x.date, S.lang)} ${fmtTime(x.date, S.lang)} · </span>` : "";
+    h += `<p>${dateLabel}${PG[A.i]} ${T.pl[A.i]} ${T.aspN[x.k]} ${PG[B.i]} ${T.plC ? T.plC[B.i][T.aspC[x.k]] : T.pl[B.i]}${T.aspPost ? T.aspPost[x.k] : ""}: ${T.kw[A.i]} ↔ ${T.kw[B.i]} – ${T.aspT[x.k]} ${x.win ? ` <span class="note">(${S.lang === "fi" ? "vaikuttaa" : "in effect"} ${fmtD(x.win.from, S.lang)}–${fmtD(x.win.to, S.lang)})</span>` : ""}</p>`;
   });
-  h += `<h3>${T.fcL}</h3>` + forecast(T, pl, sg, show, key, fpi, moon, S.per);
+  h += `<h3>${T.fcL}</h3>` + forecast(T, pl, sg, show, key, fpi, moon, S.per, activeAspects, changes);
   h += `<h3>${T.areas.join(" · ")}</h3>`;
   [3, 4, 5, 6].forEach((pi2, n) => {
-    const p = pl[pi2], hh = houseOf(p.sign, sg);
-    const r = clamp(3 + (GOOD.includes(hh) ? 1 : 0) - (HARD.includes(hh) ? 1 : 0) - (p.retro ? 1 : 0) + (p.sign % 4 === sg % 4 ? 1 : 0), 1, 5);
+    const p = pl[pi2], r = scoreAreaForPeriod(n, sg, base, days, pl);
     h += `<p><b>${T.areas[n]}</b> ${stars(r)}<br>${T.arT[n][r <= 2 ? 0 : r === 3 ? 1 : 2]}</p>`;
   });
-  const hv = hash(key), wd = new Date(base.getTime() + (hv % 7) * 864e5).getDay();
-  h += `<h3>${T.luckyL}</h3><div class="lucky"><span>${T.numL}: ${1 + hv % 9}</span><span>${T.colL}: ${T.col[(moon.sign + sg) % 12]}</span><span>${T.stL}: ${T.stone[sg]}</span><span>${T.dayL}: ${T.day[wd]}</span></div>`;
+  const hv = hash(key), lucky = bestDay(base, days, sg), wd = lucky.getDay();
+  h += `<h3>${T.luckyL}</h3><div class="lucky"><span>${T.numL}: ${1 + hv % 9}</span><span>${T.colL}: ${T.col[(moon.sign + sg) % 12]}</span><span>${T.stL}: ${T.stone[sg]}</span><span>${T.dayL}: ${T.day[wd]} (${fmtD(lucky, S.lang)})</span></div>`;
   return h + `<p class="note">${T.disc}</p></div></div>`;
 }
 
@@ -619,7 +848,7 @@ function signPage(T) {
   return `<div class="card"><div class="big">${SG[i]}</div><h2>${T.signs[i]}</h2>
 <p>${T.sd(T.signs[i], T.el[i % 4], T.mo[i % 3], r[0] === r[1] ? dm : dm + " / " + dt)} ${T.elT[i % 4]} ${T.moT[i % 3]}</p>
 <dl class="meta"><dt>${T.datesL}</dt><dd>${fmt(st)} – ${fmt(en)}</dd><dt>${T.eleL}</dt><dd>${T.el[i % 4]}</dd><dt>${T.modL}</dt><dd>${T.mo[i % 3]}</dd><dt>${T.rulL}</dt><dd>${dm} (${T.rulM})${r[0] === r[1] ? "" : ", " + dt + " (" + T.rulT + ")"}</dd></dl>
-<h3>${T.strL}</h3><p>${s}</p><h3>${T.chaL}</h3><p>${c}</p>
+<p class="note">${T.datesNote}</p><h3>${T.strL}</h3><p>${s}</p><h3>${T.chaL}</h3><p>${c}</p>
 <h3>${T.luckyL}</h3><div class="lucky"><span>${T.numL}: ${LUCKY_N[i]}</span><span>${T.colL}: ${T.col[i]}</span><span>${T.stL}: ${T.stone[i]}</span><span>${T.dayL}: ${T.day[LUCKY_D[i]]}</span></div></div>`;
 }
 
@@ -628,7 +857,7 @@ function match(T) {
   return `<div class="card"><h2>${T.pickTwo}</h2>${signPicker("a", T)}${signPicker("b", T)}
 <h2>${SG[S.a]} ${T.signs[S.a]} + ${SG[S.b]} ${T.signs[S.b]}</h2>` +
     m.s.map((v, i) => `<div>${T.mScore[i]} · ${v}%<div class="meter"><i style="width:${v}%"></i></div></div>`).join("") +
-    `<p>${T.dist[m.dist]} ${T.elRel[m.rel]}</p><p class="note">${T.disc}</p></div>`;
+    `<p>${T.dist[m.dist]} ${T.elRel[m.rel]}</p><p class="note">${T.compatNote}</p><p class="note">${T.disc}</p></div>`;
 }
 
 const learn = T => `<div class="card"><h2>${T.tabs[3]}</h2>` + T.learn.map(([t, x]) => `<details><summary>${t}</summary><p>${x}</p></details>`).join("") + "</div>";
@@ -672,6 +901,6 @@ function init() {
 }
 
 if (typeof document !== "undefined") init();
-root.HoroscopeEngine = { sky, aspects, compat, houseOf };
+root.HoroscopeEngine = { sky, aspects, allAspects, periodAspects, periodChanges, compat, houseOf, scoreArea, moonEvents };
 
 })(typeof window !== "undefined" ? window : globalThis);
