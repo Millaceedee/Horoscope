@@ -46,6 +46,14 @@ Access the horoscope application directly in your browser without installing any
 
 The source code is available in this repository. You are welcome to explore it, learn from it and build upon it under the terms of the MIT License.
 
+## Tutorial
+
+Want to learn how I built Horoscope?
+
+I've created a mini tutorial showing how I made this horoscope website. The tutorial is available on Patreon behind a paywall.
+
+**[📖 Read the Horoscope mini tutorial on Patreon](https://millaceedee.github.io/Horoscope/)** 🔒
+
 ## Original Creator
 
 Created by **Millaceedee** in 2026.
