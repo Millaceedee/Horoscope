@@ -52,7 +52,7 @@ Want to learn how I built Horoscope?
 
 I've created a mini tutorial showing how I made this horoscope website. The tutorial is available on Patreon behind a paywall.
 
-**[📖 Read the Horoscope mini tutorial on Patreon](https://millaceedee.github.io/Horoscope/)** 🔒
+**[📖 Read the Horoscope mini tutorial on Patreon](https://www.patreon.com/Millaceedee/posts/build-real-sky-173852382)** 🔒
 
 ## Original Creator
 
