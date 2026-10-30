@@ -278,7 +278,7 @@ const D = {
     ],
     sd: (n, el, mo, r) => `${n} on ${mo.toLowerCase()} ${el.toLowerCase()}merkki, jota hallitsee ${r}.`,
     house: ["minä ja elinvoima", "raha ja arvot", "viestintä ja oppiminen", "koti ja juuret", "luovuus ja romantiikka", "terveys ja arki", "kumppanuudet", "jaetut resurssit ja muutos", "matkat ja uskomukset", "ura ja maine", "ystävät ja toiveet", "lepo ja sisäinen elämä"],
-    ord: h => ["ensimmäisessä", "toisessa", "kolmannessa", "neljännessä", "viidennessä", "kuudennessa", "seitsemännessä", "kahdeksannessa", "yhdeksännessä", "kymmenennessä", "yhdestoista", "kahdestoista"][h - 1],
+    ord: h => ["ensimmäisessä", "toisessa", "kolmannessa", "neljännessä", "viidennessä", "kuudennessa", "seitsemännessä", "kahdeksannessa", "yhdeksännessä", "kymmenennessä", "yhdennessätoista", "kahdennessatoista"][h - 1],
     adv: [
       "Aseta itsesi hetkeksi etusijalle: selkeys alkaa siitä, mitä todella haluat.",
       "Tarkista, mitkä asiat ovat sinulle todella arvokkaita, ennen kuin sitoudut, kulutat tai luovutat.",
