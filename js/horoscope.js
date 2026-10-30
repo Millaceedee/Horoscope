@@ -17,89 +17,344 @@ const ASP = [[0, 7], [60, 5], [90, 6], [120, 6], [180, 7]];
 /* ---------- DATA ---------- */
 const D = {
 en: {
-  sub: 'Horoscopes calculated from the real sky', tabs: ['Horoscope', 'Signs', 'Compatibility', 'Encyclopedia'],
-  per: ['Day', 'Week', 'Month'], date: 'Date', pick: 'Choose your sign', sky: 'The sky',
+  sub: 'Horoscopes calculated from the real sky',
+  tabs: ['Horoscope', 'Signs', 'Compatibility', 'Encyclopedia'],
+  per: ['Day', 'Week', 'Month'],
+  date: 'Date',
+  pick: 'Choose your sign',
+  sky: 'The sky',
   signs: ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'],
-  el: ['Fire', 'Earth', 'Air', 'Water'], mo: ['Cardinal', 'Fixed', 'Mutable'],
+  el: ['Fire', 'Earth', 'Air', 'Water'],
+  mo: ['Cardinal', 'Fixed', 'Mutable'],
   pl: ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn'],
   rl: ['Mars', 'Venus', 'Mercury', 'Moon', 'Sun', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto'],
   kw: ['vitality and identity', 'feelings and instincts', 'thinking and talking', 'affection and values', 'drive and courage', 'growth and optimism', 'structure and responsibility'],
-  tr: ['courageous, direct, energetic|impatient, impulsive', 'loyal, patient, sensual|stubborn, possessive', 'curious, witty, versatile|restless, scattered', 'caring, intuitive, protective|moody, clingy', 'generous, warm, confident|proud, dramatic', 'precise, helpful, practical|overcritical, anxious', 'fair, charming, diplomatic|indecisive, conflict-averse', 'intense, loyal, perceptive|secretive, controlling', 'adventurous, honest, optimistic|careless, preachy', 'disciplined, ambitious, reliable|cold, workaholic', 'original, humane, independent|aloof, rebellious', 'compassionate, imaginative, gentle|escapist, oversensitive'],
+  tr: [
+    'courageous, direct, energetic|impatient, impulsive',
+    'loyal, patient, sensual|stubborn, possessive',
+    'curious, witty, versatile|restless, scattered',
+    'caring, intuitive, protective|moody, clingy',
+    'generous, warm, confident|proud, dramatic',
+    'precise, helpful, practical|overcritical, anxious',
+    'fair, charming, diplomatic|indecisive, conflict-averse',
+    'intense, loyal, perceptive|secretive, controlling',
+    'adventurous, honest, optimistic|careless, preachy',
+    'disciplined, ambitious, reliable|cold, workaholic',
+    'original, humane, independent|aloof, rebellious',
+    'compassionate, imaginative, gentle|escapist, oversensitive'
+  ],
   stone: ['Diamond', 'Emerald', 'Agate', 'Moonstone', 'Ruby', 'Sapphire', 'Opal', 'Topaz', 'Turquoise', 'Garnet', 'Amethyst', 'Aquamarine'],
   col: ['red', 'green', 'yellow', 'silver', 'gold', 'navy', 'pink', 'burgundy', 'purple', 'brown', 'turquoise', 'sea green'],
   day: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-  elT: ['Fire gives it spark, enthusiasm and a need to act.', 'Earth grounds it in the senses, work and what lasts.', 'Air makes it curious, social and quick with ideas.', 'Water makes it feel deeply and read the mood of a room.'],
-  moT: ['As a cardinal sign it starts things.', 'As a fixed sign it holds steady and finishes what it begins.', 'As a mutable sign it adapts and learns on the way.'],
+  elT: [
+    'Fire gives it spark, enthusiasm and a need to act.',
+    'Earth grounds it in the senses, work and what lasts.',
+    'Air makes it curious, social and quick with ideas.',
+    'Water makes it feel deeply and read the mood of a room.'
+  ],
+  moT: [
+    'As a cardinal sign it starts things.',
+    'As a fixed sign it holds steady and finishes what it begins.',
+    'As a mutable sign it adapts and learns on the way.'
+  ],
   sd: (n, el, mo, r) => `${n} is a ${mo.toLowerCase()} ${el.toLowerCase()} sign, ruled by ${r}.`,
   house: ['self and vitality', 'money and values', 'communication and learning', 'home and roots', 'creativity and romance', 'health and routines', 'partnerships', 'shared resources and change', 'travel and beliefs', 'career and reputation', 'friends and hopes', 'rest and the inner life'],
   ord: h => h + (h === 1 ? 'st' : h === 2 ? 'nd' : h === 3 ? 'rd' : 'th'),
-  adv: ['Put yourself first for a moment; clarity starts with what you actually want.', 'Check what you value before you spend, commit or agree.', 'Say it out loud or write it down; words will do more than you expect.', 'Tend to home and family; a quiet evening may do more than a big plan.', 'Make room for play and for something you do purely because you love it.', 'Small routines carry the day; fix one habit and the rest follows.', 'Listen as much as you speak; the other person holds a missing piece.', 'Face what is shared or unfinished and settle the account honestly.', 'Widen your horizon: a book, a trip or a bolder idea beckons.', 'Your efforts are visible; aim them at a goal you really want.', 'Lean on friends and let a wish out of the drawer.', 'Step back and rest; the answer arrives when you stop chasing it.'],
-  retroP: ['', '', ' Retrograde Mercury: reread messages, back up your files and expect old conversations to resurface.', ' Retrograde Venus: old feelings and tastes return, so hold off on big decisions about love or money.', ' Retrograde Mars: your drive turns inward; go slowly and sort out what still deserves the effort.', ' Retrograde Jupiter: growth turns inward; revisit a plan or belief you have outgrown.', ' Retrograde Saturn: your commitments are inspected; rebuild what is weak instead of adding more.'],
-  fcL: 'Forecast', moonL: 'Moon phases',
-  fcOpen: ['Aries rarely waits for permission, and this stretch rewards that spark, though a pause now and then keeps it from scorching.', 'Taurus thrives when life slows to a pace the senses can enjoy, and this stretch asks you to trust your steadiness.', 'Your Gemini mind links things that others keep apart, and the coming stretch gives it plenty of material.', 'Cancer reads the emotional weather before anyone speaks, and that gift is worth using on yourself too.', 'Leo shines brightest when warmth, not applause, is the aim, and this stretch sets a stage for exactly that.', 'Virgo sees the detail others miss, and this stretch shows where a small adjustment makes a large difference.', 'Libra seeks balance in everything, so notice where you have been keeping the peace at your own expense.', 'Scorpio senses what lies beneath the surface, and the days ahead invite you to follow that instinct to the root.', 'Sagittarius looks toward the far horizon, and this stretch opens a path worth taking even without a map.', 'Capricorn builds slowly and well, and this stretch lets you see how much has already been built.', 'Aquarius thinks a step ahead of the crowd, and now the crowd may finally be ready to listen.', 'Pisces drifts between the practical and the dreamed, and this stretch invites you to give one dream a concrete foothold.'],
-  fcPlanet: ['The Sun, source of your vitality, lights the way and asks you to act as yourself rather than as expected.', 'The Moon sets the emotional tone, so moods shift quickly and your intuition is a reliable guide.', 'Mercury sharpens speech, travel and paperwork, and messages matter more than usual.', 'Venus softens the edges and draws attention to what you love, value and want to be near.', 'Mars supplies drive and impatience in equal measure, so choose where to point it.', 'Jupiter widens what is possible, and chances appear for those who stay curious.', 'Saturn tests what is solid; effort now becomes a foundation later.'],
-  fcHouse: ['Attention turns to you: your presence, your energy and the way you begin things.', 'Money and self-worth take centre stage, a good moment to see what you truly value.', 'Conversation, siblings, neighbours and short journeys carry the story.', 'The story moves close to home, family and the roots that hold you.', 'Creativity, romance and play sit near the surface and want an outlet.', 'Daily routines, work habits and health ask for small, honest improvements.', 'Other people come into focus: partners, close friends and anyone you meet as an equal.', 'Shared resources, deep trust and endings that make room for beginnings are in view.', 'The wider world calls through study, travel, belief and big questions.', 'Career and public image are in the spotlight; what you do is seen.', 'Friends, groups and long-term hopes carry the news.', 'The quiet background is active: rest, solitude and what you have been carrying unseen.'],
-  fcMoon: ['The New Moon offers a clean page; name one wish plainly and let it grow slowly.', 'The waxing crescent favours first steps, ones small enough to take today.', 'At the first quarter an obstacle appears, which is simply the sky asking how much you want this.', 'The waxing gibbous rewards patience and polishing; you are closer than it feels.', 'The Full Moon brings things to light, a truth, a result or a person; celebrate what has ripened and release what has not.', 'The waning gibbous is for sharing and thanks; pass on what you have learned.', 'The last quarter asks you to let go of habits, promises or clutter that no longer serve.', 'The waning crescent is a time for rest; gentle endings make room for a fresh cycle.'],
+  adv: [
+    'Put yourself first for a moment; clarity begins with what you actually want.',
+    'Check what you value before you spend, commit or agree.',
+    'Say it out loud or write it down; words can change more than you expect.',
+    'Tend to home and family; a quiet evening may do more than a grand plan.',
+    'Make room for play and for something you do purely because you love it.',
+    'Small routines carry the day; fix one habit and the rest follows.',
+    'Listen as much as you speak; the other person may hold a missing piece.',
+    'Face what is shared or unfinished and settle the matter honestly.',
+    'Widen your horizon: a book, a trip or a bolder idea is calling.',
+    'Your efforts are visible; aim them at a goal you truly want.',
+    'Lean on friends and let a wish out of the drawer.',
+    'Step back and rest; the answer arrives when you stop chasing it.'
+  ],
+  retroP: [
+    '',
+    '',
+    ' Retrograde Mercury: reread messages, back up your files and expect old conversations to resurface.',
+    ' Retrograde Venus: old feelings and tastes return, so hold off on big decisions about love or money.',
+    ' Retrograde Mars: your drive turns inward; go slowly and sort out what still deserves the effort.',
+    ' Retrograde Jupiter: growth turns inward; revisit a plan or belief you have outgrown.',
+    ' Retrograde Saturn: your commitments are inspected; rebuild what is weak instead of adding more.'
+  ],
+  fcL: 'Forecast',
+  moonL: 'Moon phases',
+  fcOpen: [
+    'Aries rarely waits for permission, and this stretch rewards that spark, though a pause now and then keeps it from scorching.',
+    'Taurus thrives when life slows to a pace the senses can enjoy, and this stretch asks you to trust your steadiness.',
+    'Your Gemini mind links things that others keep apart, and the coming stretch gives it plenty to work with.',
+    'Cancer reads the emotional weather before anyone speaks, and that gift is worth using on yourself too.',
+    'Leo shines brightest when warmth, not applause, is the aim, and this stretch sets a stage for exactly that.',
+    'Virgo sees the detail others miss, and this stretch shows where a small adjustment makes a large difference.',
+    'Libra seeks balance in everything, so notice where you have been keeping the peace at your own expense.',
+    'Scorpio senses what lies beneath the surface, and the days ahead invite you to follow that instinct to the root.',
+    'Sagittarius looks toward the far horizon, and this stretch opens a path worth taking even without a map.',
+    'Capricorn builds slowly and well, and this stretch lets you see how much has already been built.',
+    'Aquarius thinks a step ahead of the crowd, and now the crowd may finally be ready to listen.',
+    'Pisces drifts between the practical and the dreamed, and this stretch invites you to give one dream a concrete foothold.'
+  ],
+  fcPlanet: [
+    'The Sun, source of your vitality, lights the way and asks you to act as yourself rather than as expected.',
+    'The Moon sets the emotional tone, so moods shift quickly and your intuition is a reliable guide.',
+    'Mercury sharpens speech, travel and paperwork, and messages matter more than usual.',
+    'Venus softens the edges and draws attention to what you love, value and want to be near.',
+    'Mars supplies drive and impatience in equal measure, so choose where to point it.',
+    'Jupiter widens what is possible, and chances appear for those who stay curious.',
+    'Saturn tests what is solid; effort now becomes a foundation later.'
+  ],
+  fcHouse: [
+    'Attention turns to you: your presence, your energy and the way you begin things.',
+    'Money and self-worth take centre stage; it is a good moment to see what you value most.',
+    'Conversation, siblings, neighbours and short journeys carry the story.',
+    'The story moves close to home, family and the roots that hold you.',
+    'Creativity, romance and play sit near the surface and want an outlet.',
+    'Daily routines, work habits and health ask for small, honest improvements.',
+    'Other people come into focus: partners, close friends and anyone you meet as an equal.',
+    'Shared resources, deep trust and endings that make room for beginnings are in view.',
+    'The wider world calls through study, travel, belief and big questions.',
+    'Career and public image are in the spotlight; what you do is seen.',
+    'Friends, groups and long-term hopes carry the news.',
+    'The quiet background is active: rest, solitude and what you have been carrying unseen.'
+  ],
+  fcMoon: [
+    'The New Moon offers a clean page; name one wish plainly and let it grow slowly.',
+    'The waxing crescent favours first steps, small enough to take today.',
+    'At the first quarter an obstacle appears, which is simply the sky asking how much you want this.',
+    'The waxing gibbous rewards patience and polishing; you are closer than it feels.',
+    'The Full Moon brings things to light: a truth, a result or a person. Celebrate what has ripened and release what has not.',
+    'The waning gibbous is for sharing and gratitude; pass on what you have learned.',
+    'The last quarter asks you to let go of habits, promises or clutter that no longer serve.',
+    'The waning crescent is a time for rest; gentle endings make room for a fresh cycle.'
+  ],
   fcAsp: ['merge', 'cooperate', 'pull against each other', 'flow together', 'meet face to face'],
   fcBeneath: (a, b, v) => `Beneath it all, ${a} and ${b} ${v}.`,
-  fcClose: ['Courage includes knowing when to listen.', 'Steadiness is a strength, not stagnation, so allow yourself some pleasure.', 'You do not have to understand everything at once; one thread at a time is enough.', "You do not have to carry everyone's feelings, only your own.", 'A warm word given away returns brighter.', 'Good enough is usually exactly right.', "Your opinion weighs as much as anyone else's.", 'Trust is built slowly, and you set the pace.', 'The journey is worth as much as the destination, and you may always come home.', 'Rest is not laziness but part of building.', 'An idea only becomes real once you tell it to someone.', 'Your feelings are information, and boundaries protect your sensitivity.'],
-  pline: (g, p, s, h, a) => `${g} ${p} in ${s} moves through your ${h}.`, 
+  fcClose: [
+    'Courage includes knowing when to listen.',
+    'Steadiness is a strength, not stagnation, so allow yourself some pleasure.',
+    'You do not have to understand everything at once; one thread at a time is enough.',
+    'You do not have to carry everyone’s feelings, only your own.',
+    'A warm word given away returns brighter.',
+    'Good enough is usually exactly right.',
+    'Your opinion weighs as much as anyone else’s.',
+    'Trust is built slowly, and you set the pace.',
+    'The journey is worth as much as the destination, and you may always come home.',
+    'Rest is not laziness but part of building.',
+    'An idea only becomes real once you tell it to someone.',
+    'Your feelings are information, and boundaries protect your sensitivity.'
+  ],
+  pline: (g, p, s, h, a) => `${g} ${p} in ${s} moves through your ${h}.`,
   hs: (o, a) => `${o} house – ${a}`,
   aspN: ['joins', 'supports', 'challenges', 'flows with', 'faces'],
-  aspT: ['their themes blend and amplify each other.', 'a gentle opening – small effort is rewarded.', 'friction that asks for a decision.', 'things come easily; do not waste it.', 'two sides to weigh until you find balance.'],
+  aspT: [
+    'their themes blend and amplify each other.',
+    'a gentle opening – small effort is rewarded.',
+    'friction that asks for a decision.',
+    'things come easily; do not waste it.',
+    'two sides to weigh until you find balance.'
+  ],
   phase: ['New Moon', 'Waxing Crescent', 'First Quarter', 'Waxing Gibbous', 'Full Moon', 'Waning Gibbous', 'Last Quarter', 'Waning Crescent'],
   phaseT: ['A good time to plant an intention.', 'Take the first practical step.', 'Decisions and effort pay off now.', 'Refine, adjust, keep going.', 'Things come to light; celebrate or release.', 'Share what you learned.', 'Let go of what no longer works.', 'Rest and prepare for a fresh cycle.'],
   moonIn: (s, p) => `Moon in ${s}, ${p}.`,
   theme: ['Start with yourself', 'Value what you have', 'Talk it through', 'Return to your roots', 'Make something for joy', 'Tidy one small thing', 'Meet someone halfway', 'Let something go', 'Look further', 'Show what you can do', 'Reach out to friends', 'Slow down and rest'],
-  ques: [['What would I begin today if I were not afraid?', 'Where am I rushing, and what would patience reveal?', 'Whose battle am I fighting that is not mine?'], ['What small, steady thing would I be proud of?', 'What am I holding on to out of habit rather than love?', 'What would a truly comfortable day look like for me?'], ['Who needs to hear what I am thinking?', 'Which of my many ideas deserves a whole week?', 'What question am I avoiding by staying busy?'], ['What am I really feeling beneath the surface?', 'Whom do I take care of, and who takes care of me?', 'What does home mean to me right now?'], ['Where could I give credit instead of seeking it?', 'What would I create if nobody applauded?', 'Who deserves my warmth today?'], ['What would be good enough, and for whom am I aiming higher?', 'Which small habit would change my week?', 'Where can I be as kind to myself as I am to others?'], ['Where am I choosing peace over honesty?', 'What do I want, apart from what is fair to everyone?', 'Which decision have I postponed too long?'], ['What am I ready to release?', 'Whom do I trust, and why?', 'What truth am I circling around?'], ['What horizon am I walking toward?', 'What would I do if I knew I could not fail?', 'What did my latest detour teach me?'], ['What have I built that I forgot to celebrate?', 'Where would rest make me more effective?', 'Which goal is mine, and which is expected of me?'], ['Which of my ideas needs a real-world test?', 'Where do I want to belong, not only stand apart?', 'Whom could I invite into my plans?'], ['What do my dreams tell me about what I want?', 'Where do I need a boundary to protect my gentleness?', 'What small step would bring a dream closer?']],
-  themeL: 'Theme', quesL: 'Reflection',
+  ques: [
+    ['What would I begin today if I were not afraid?', 'Where am I rushing, and what would patience reveal?', 'Whose battle am I fighting that is not mine?'],
+    ['What small, steady thing would I be proud of?', 'What am I holding on to out of habit rather than love?', 'What would a truly comfortable day look like for me?'],
+    ['Who needs to hear what I am thinking?', 'Which of my many ideas deserves a whole week?', 'What question am I avoiding by staying busy?'],
+    ['What am I really feeling beneath the surface?', 'Whom do I take care of, and who takes care of me?', 'What does home mean to me right now?'],
+    ['Where could I give credit instead of seeking it?', 'What would I create if nobody applauded?', 'Who deserves my warmth today?'],
+    ['What would be good enough, and for whom am I aiming higher?', 'Which small habit would change my week?', 'Where can I be as kind to myself as I am to others?'],
+    ['Where am I choosing peace over honesty?', 'What do I want, apart from what is fair to everyone?', 'Which decision have I postponed too long?'],
+    ['What am I ready to release?', 'Whom do I trust, and why?', 'What truth am I circling around?'],
+    ['What horizon am I walking toward?', 'What would I do if I knew I could not fail?', 'What did my latest detour teach me?'],
+    ['What have I built that I forgot to celebrate?', 'Where would rest make me more effective?', 'Which goal is mine, and which is expected of me?'],
+    ['Which of my ideas needs a real-world test?', 'Where do I want to belong, not only stand apart?', 'Whom could I invite into my plans?'],
+    ['What do my dreams tell me about what I want?', 'Where do I need a boundary to protect my gentleness?', 'What small step would bring a dream closer?']
+  ],
+  themeL: 'Theme',
+  quesL: 'Reflection',
   areas: ['Love', 'Work', 'Money', 'Growth'],
-  arT: [['Keep expectations light and kind.', 'Warmth is steady; show it.', 'Romance and charm are favoured.'], ['Pace yourself and avoid friction.', 'Steady effort gets noticed.', 'Energy and initiative open doors.'], ['Be careful with impulse spending.', 'Balanced – plan before you buy.', 'Good timing for sensible risks.'], ['A slow patch; patience is the lesson.', 'Small habits make progress.', 'A season for real inner growth.']],
-  luckyL: 'Lucky touches', numL: 'number', colL: 'colour', stL: 'stone', dayL: 'day',
-  strL: 'Strengths', chaL: 'Challenges', datesL: 'Dates', eleL: 'Element', modL: 'Quality', rulL: 'Ruler', rulM: 'modern', rulT: 'traditional',
-  pickTwo: 'Choose two signs', mScore: ['Love', 'Friendship', 'Communication'],
-  dist: ['Same sign: a mirror, comforting and sometimes too familiar.', 'Neighbours: very different rhythms, needs patience and curiosity.', 'Sextile: friendly, easy cooperation and shared interests.', 'Square: strong spark and friction; growth through effort.', 'Trine: natural understanding and shared ease.', 'Quincunx: an odd pair that must keep adjusting to each other.', 'Opposites: magnetic attraction that balances each other\'s gaps.'],
-  elRel: ['Same element – you feel the world alike.', 'Compatible elements – they feed each other.', 'Different elements – translate each other\'s style.'],
+  arT: [
+    ['Keep expectations light and kind.', 'Warmth is steady; show it.', 'Romance and charm are favoured.'],
+    ['Pace yourself and avoid friction.', 'Steady effort gets noticed.', 'Energy and initiative open doors.'],
+    ['Be careful with impulse spending.', 'Balanced – plan before you buy.', 'Good timing for sensible risks.'],
+    ['A slow patch; patience is the lesson.', 'Small habits make progress.', 'A season for real inner growth.']
+  ],
+  luckyL: 'Lucky touches',
+  numL: 'number',
+  colL: 'colour',
+  stL: 'stone',
+  dayL: 'day',
+  strL: 'Strengths',
+  chaL: 'Challenges',
+  datesL: 'Dates',
+  eleL: 'Element',
+  modL: 'Quality',
+  rulL: 'Ruler',
+  rulM: 'modern',
+  rulT: 'traditional',
+  pickTwo: 'Choose two signs',
+  mScore: ['Love', 'Friendship', 'Communication'],
+  dist: [
+    'Same sign: a mirror, comforting and sometimes too familiar.',
+    'Neighbours: very different rhythms, needs patience and curiosity.',
+    'Sextile: friendly, easy cooperation and shared interests.',
+    'Square: strong spark and friction; growth through effort.',
+    'Trine: natural understanding and shared ease.',
+    'Quincunx: an odd pair that must keep adjusting to each other.',
+    'Opposites: magnetic attraction that balances each other’s gaps.'
+  ],
+  elRel: ['Same element – you feel the world alike.', 'Compatible elements – they feed each other.', 'Different elements – translate each other’s style.'],
   learn: [
     ['Elements', 'Fire (Aries, Leo, Sagittarius) acts, Earth (Taurus, Virgo, Capricorn) builds, Air (Gemini, Libra, Aquarius) thinks and connects, Water (Cancer, Scorpio, Pisces) feels.'],
     ['Qualities', 'Cardinal signs begin seasons and projects, fixed signs sustain, mutable signs adapt and close seasons.'],
     ['Planets', 'Sun = identity, Moon = feelings, Mercury = mind, Venus = love and values, Mars = drive, Jupiter = growth, Saturn = structure. Traditional rulers use the seven visible planets; modern astrology adds Uranus, Neptune and Pluto.'],
-    ['Retrograde', 'A planet looks like it moves backwards from Earth. Symbolically: review, rethink, redo. Mercury retrograde is the best known.'],
-    ['Houses', 'Sun-sign horoscopes use "whole-sign" houses counted from your sign: your sign is the 1st house, the next sign the 2nd, and so on. A transiting planet lights up that area of life.'],
+    ['Retrograde', 'A planet appears to move backwards from Earth. Symbolically, it asks you to review, rethink and redo. Mercury retrograde is the best known.'],
+    ['Houses', 'Sun-sign horoscopes use “whole-sign” houses counted from your sign: your sign is the 1st house, the next sign the 2nd, and so on. A transiting planet lights up that area of life.'],
     ['Aspects', 'Angles between planets: conjunction 0° (blend), sextile 60° (ease), square 90° (tension), trine 120° (flow), opposition 180° (balance).'],
     ['Tropical zodiac', 'This app uses the tropical zodiac: signs begin at the March equinox, not at the star constellations.'],
-    ['How it works', 'Planet positions are calculated from astronomy; the meanings come from rule-based astrological tradition (modern psychological and traditional symbolism). It is symbolic reflection, not a prediction.']
+    ['How it works', 'Planet positions are calculated by astronomy; the meanings are drawn from rule-based astrological tradition (modern psychological and classical symbolism). It is symbolic reflection, not a prediction.']
   ],
-  disc: 'Astrological interpretation is symbolic and for reflection and entertainment, not a scientific prediction.',
+  disc: 'Astrological interpretation is symbolic and intended for reflection and entertainment, not a scientific prediction.',
   credit: '<a href="https://github.com/Millaceedee/" target="_blank" rel="noopener noreferrer" style="color:inherit">Millaceedee</a> © 2026. Licensed under the MIT License. Astronomical calculations: <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noopener noreferrer" style="color:inherit">Astronomy Engine</a> by Don Cross.'
 },
 fi: {
-  sub: 'Horoskoopit laskettuna todellisesta taivaasta', tabs: ['Horoskooppi', 'Merkit', 'Yhteensopivuus', 'Tietosanakirja'],
-  per: ['Päivä', 'Viikko', 'Kuukausi'], date: 'Päivämäärä', pick: 'Valitse merkkisi', sky: 'Taivas',
+  sub: 'Horoskoopit laskettuna todellisesta taivaasta',
+  tabs: ['Horoskooppi', 'Merkit', 'Yhteensopivuus', 'Tietosanakirja'],
+  per: ['Päivä', 'Viikko', 'Kuukausi'],
+  date: 'Päivämäärä',
+  pick: 'Valitse merkkisi',
+  sky: 'Taivas',
   signs: ['Oinas', 'Härkä', 'Kaksonen', 'Rapu', 'Leijona', 'Neitsyt', 'Vaaka', 'Skorpioni', 'Jousimies', 'Kauris', 'Vesimies', 'Kalat'],
-  el: ['Tuli', 'Maa', 'Ilma', 'Vesi'], mo: ['Aloittava', 'Vakaa', 'Muuttuva'],
+  el: ['Tuli', 'Maa', 'Ilma', 'Vesi'],
+  mo: ['Aloittava', 'Vakaa', 'Muuttuva'],
   pl: ['Aurinko', 'Kuu', 'Merkurius', 'Venus', 'Mars', 'Jupiter', 'Saturnus'],
   rl: ['Mars', 'Venus', 'Merkurius', 'Kuu', 'Aurinko', 'Jupiter', 'Saturnus', 'Uranus', 'Neptunus', 'Pluto'],
   kw: ['elinvoima ja identiteetti', 'tunteet ja vaistot', 'ajattelu ja puhe', 'kiintymys ja arvot', 'tarmo ja rohkeus', 'kasvu ja optimismi', 'rakenteet ja vastuu'],
-  tr: ['rohkea, suora, energinen|kärsimätön, impulsiivinen', 'uskollinen, kärsivällinen, aistillinen|jääräpäinen, omistushaluinen', 'utelias, sukkela, monipuolinen|levoton, hajanainen', 'huolehtiva, intuitiivinen, suojeleva|oikukas, takertuva', 'antelias, lämmin, itsevarma|ylpeä, dramaattinen', 'tarkka, auttavainen, käytännöllinen|liian kriittinen, huolestuva', 'reilu, charmikas, diplomaattinen|päättämätön, riitoja karttava', 'intensiivinen, uskollinen, tarkkanäköinen|salaileva, kontrolloiva', 'seikkailunhaluinen, rehellinen, optimistinen|holtiton, saarnaava', 'kurinalainen, kunnianhimoinen, luotettava|kylmä, työnarkomaani', 'omaperäinen, humaani, itsenäinen|etäinen, kapinallinen', 'myötätuntoinen, mielikuvituksellinen, lempeä|todellisuuspakoinen, herkkähipiäinen'],
+  tr: [
+    'rohkea, suora, energinen|kärsimätön, impulsiivinen',
+    'uskollinen, kärsivällinen, aistillinen|jääräpäinen, omistushaluinen',
+    'utelias, sukkela, monipuolinen|levoton, hajanainen',
+    'huolehtiva, intuitiivinen, suojeleva|oikukas, takertuva',
+    'antelias, lämmin, itsevarma|ylpeä, dramaattinen',
+    'tarkka, auttavainen, käytännöllinen|liian kriittinen, huolestuva',
+    'reilu, charmikas, diplomaattinen|päättämätön, riitoja karttava',
+    'intensiivinen, uskollinen, tarkkanäköinen|salaileva, kontrolloiva',
+    'seikkailunhaluinen, rehellinen, optimistinen|holtiton, saarnaava',
+    'kurinalainen, kunnianhimoinen, luotettava|kylmä, työnarkomaani',
+    'omaperäinen, humaani, itsenäinen|etäinen, kapinallinen',
+    'myötätuntoinen, mielikuvituksellinen, lempeä|todellisuuspakoinen, herkkähipiäinen'
+  ],
   stone: ['Timantti', 'Smaragdi', 'Akaatti', 'Kuukivi', 'Rubiini', 'Safiiri', 'Opaali', 'Topaasi', 'Turkoosi', 'Granaatti', 'Ametisti', 'Akvamariini'],
   col: ['punainen', 'vihreä', 'keltainen', 'hopea', 'kulta', 'laivastonsininen', 'vaaleanpunainen', 'viininpunainen', 'violetti', 'ruskea', 'turkoosi', 'merenvihreä'],
   day: ['sunnuntai', 'maanantai', 'tiistai', 'keskiviikko', 'torstai', 'perjantai', 'lauantai'],
-  elT: ['Tuli antaa kipinää, innostusta ja tarpeen toimia.', 'Maa maadoittaa aisteihin, työhön ja pysyvään.', 'Ilma tekee uteliaaksi, sosiaaliseksi ja ideoissa nopeaksi.', 'Vesi saa tuntemaan syvästi ja aistimaan tunnelman.'],
-  moT: ['Aloittavana merkkinä se käynnistää asioita.', 'Vakaana merkkinä se pysyy lujana ja vie aloittamansa loppuun.', 'Muuttuvana merkkinä se mukautuu ja oppii matkan varrella.'],
+  elT: [
+    'Tuli antaa kipinää, innostusta ja halun toimia.',
+    'Maa maadoittaa aistien, työn ja pysyvän välille.',
+    'Ilma tekee uteliaaksi, sosiaaliseksi ja nopeaksi ideoissa.',
+    'Vesi saa tuntemaan syvästi ja lukemaan tunnelman.'
+  ],
+  moT: [
+    'Aloittavana merkkinä se käynnistää asioita.',
+    'Vakaana merkkinä se pysyy lujana ja vie aloittamansa loppuun.',
+    'Muuttuvana merkkinä se mukautuu ja oppii matkan varrella.'
+  ],
   sd: (n, el, mo, r) => `${n} on ${mo.toLowerCase()} ${el.toLowerCase()}merkki, jota hallitsee ${r}.`,
   house: ['minä ja elinvoima', 'raha ja arvot', 'viestintä ja oppiminen', 'koti ja juuret', 'luovuus ja romantiikka', 'terveys ja arki', 'kumppanuudet', 'jaetut resurssit ja muutos', 'matkat ja uskomukset', 'ura ja maine', 'ystävät ja toiveet', 'lepo ja sisäinen elämä'],
-  ord: h => ['ensimmäisessä', 'toisessa', 'kolmannessa', 'neljännessä', 'viidennessä', 'kuudennessa', 'seitsemännessä', 'kahdeksannessa', 'yhdeksännessä', 'kymmenennessä', 'yhdennessätoista', 'kahdennessatoista'][h - 1],
-  adv: ['Aseta itsesi hetkeksi etusijalle; selkeys alkaa siitä, mitä todella haluat.', 'Tarkista, mitä arvostat, ennen kuin kulutat, sitoudut tai suostut.', 'Sano se ääneen tai kirjoita ylös; sanat saavat aikaan enemmän kuin odotat.', 'Pidä huolta kodista ja perheestä; hiljainen ilta voi tehdä enemmän kuin suuri suunnitelma.', 'Jätä tilaa leikille ja jollekin, minkä teet pelkästä rakkaudesta.', 'Pienet rutiinit kantavat päivän; korjaa yksi tapa, niin muut seuraavat.', 'Kuuntele yhtä paljon kuin puhut; toisella on puuttuva pala.', 'Katso silmiin sitä, mikä on jaettua tai kesken, ja selvitä tilit rehellisesti.', 'Laajenna horisonttia: kirja, matka tai rohkeampi ajatus kutsuu.', 'Ponnistelusi näkyvät; suuntaa ne tavoitteeseen, jota todella haluat.', 'Nojaa ystäviin ja päästä toive pois laatikosta.', 'Astu taaksepäin ja lepää; vastaus tulee, kun lakkaat jahtaamasta sitä.'],
-  retroP: ['', '', ' Merkurius perääntyy: lue viestit uudelleen, ota varmuuskopiot ja varaudu vanhojen keskustelujen palaamiseen.', ' Venus perääntyy: vanhat tunteet ja maut palaavat, joten odota suurten rakkaus- ja rahapäätösten kanssa.', ' Mars perääntyy: tarmo kääntyy sisäänpäin; etene hitaasti ja selvitä, mikä vielä ansaitsee vaivan.', ' Jupiter perääntyy: kasvu kääntyy sisäänpäin; palaa suunnitelmaan tai uskomukseen, josta olet kasvanut ulos.', ' Saturnus perääntyy: sitoumuksesi tarkastetaan; rakenna uudelleen se, mikä on heikkoa, äläkä lisää uutta.'],
-  fcL: 'Ennuste', moonL: 'Kuun vaiheet',
-  fcOpen: ['Oinas ei jää odottamaan lupaa, ja tämä jakso palkitsee tuon kipinän – tauko silloin tällöin estää sitä polttamasta.', 'Härkä kukoistaa, kun elämä hidastuu vauhtiin, josta aistit voivat nauttia, ja tämä jakso pyytää luottamaan omaan vakauteesi.', 'Kaksosen mieli yhdistää nopeasti asioita, jotka muut pitävät erillään, ja edessä oleva jakso tarjoaa siihen paljon ainesta.', 'Rapu aistii tunnelman ennen kuin kukaan sanoo mitään, ja tuota lahjaa kannattaa käyttää myös itseensä.', 'Leijona loistaa kirkkaimmin, kun tavoitteena on lämpö eikä suosionosoitukset, ja tämä jakso rakentaa juuri siihen näyttämön.', 'Neitsyt huomaa yksityiskohdan, jonka muut ohittavat, ja tämä jakso paljastaa, missä pieni säätö tekee suuren eron.', 'Vaaka hakee tasapainoa kaikessa, joten huomaa, missä olet ylläpitänyt rauhaa omalla kustannuksellasi.', 'Skorpioni aistii pinnan alla piilevän, ja tulevat päivät kutsuvat seuraamaan vaistoa aina juurille asti.', 'Jousimies katsoo kaukaiselle horisontille, ja tämä jakso avaa polun, joka kannattaa kulkea ilman karttaakin.', 'Kauris rakentaa hitaasti ja hyvin, ja tämä jakso antaa nähdä, kuinka paljon on jo rakennettu.', 'Vesimies ajattelee askeleen joukkoa edellä, ja nyt joukko voi vihdoin olla valmis kuuntelemaan.', 'Kalat ajelehtii käytännöllisen ja unelmoidun välillä, ja tämä jakso kutsuu antamaan unelmalle yhden konkreettisen jalansijan maailmassa.'],
-  fcPlanet: ['Aurinko, elinvoimasi lähde, valaisee tien ja pyytää toimimaan omana itsenäsi odotetun sijaan.', 'Kuu asettaa tunnesävyn, joten mielialat vaihtuvat nopeasti ja intuitiosi on luotettava opas.', 'Merkurius terävöittää puhetta, matkustamista ja paperitöitä, ja viesteillä on tavallista enemmän painoa.', 'Venus pehmentää reunoja ja kiinnittää huomion siihen, mitä rakastat, arvostat ja haluat lähellesi.', 'Mars tuo tarmoa ja kärsimättömyyttä yhtä paljon, joten valitse, mihin sen suuntaat.', 'Jupiter laajentaa mahdollisuuksia, ja tilaisuuksia aukeaa niille, jotka pysyvät uteliaina.', 'Saturnus koettelee sitä, mikä on vankkaa; ponnistelu nyt on perustus myöhemmin.'],
-  fcHouse: ['Huomio kääntyy sinuun: olemukseesi, energiaasi ja tapaasi aloittaa asioita.', 'Raha ja omanarvontunto nousevat keskiöön – hyvä hetki nähdä, mikä sinulle todella on arvokasta.', 'Keskustelut, sisarukset, naapurit ja lyhyet matkat kantavat tarinaa.', 'Tarina siirtyy lähelle kotia, perhettä ja juuria, jotka pitävät sinut paikallasi.', 'Luovuus, romantiikka ja leikki ovat pinnassa ja haluavat purkautua.', 'Arki, työtavat ja terveys kaipaavat pieniä, rehellisiä parannuksia.', 'Toiset ihmiset tulevat näkyviin: kumppanit, läheiset ystävät ja kaikki, joita kohtaat tasavertaisina.', 'Jaetut resurssit, syvä luottamus ja päättyvät asiat, jotka tekevät tilaa uudelle, ovat esillä.', 'Laajempi maailma kutsuu opiskelun, matkojen, uskomusten ja suurten kysymysten kautta.', 'Ura ja julkinen kuva ovat valokeilassa; se, mitä teet, huomataan.', 'Ystävät, ryhmät ja pitkän aikavälin toiveet kantavat uutisia.', 'Hiljainen tausta on liikkeessä: lepo, yksinolo ja se, mitä olet kantanut näkymättömissä.'],
-  fcMoon: ['Uusikuu tarjoaa puhtaan sivun; nimeä yksi toive selkeästi ja anna sen kasvaa hitaasti.', 'Kasvava sirppi suosii ensiaskeleita, sellaisia, jotka ovat tarpeeksi pieniä otettaviksi tänään.', 'Ensimmäisellä neljänneksellä vastaan tulee este, joka on vain taivaan tapa kysyä, kuinka paljon tätä haluat.', 'Kasvava kuperakuu palkitsee kärsivällisyyden ja viimeistelyn; olet lähempänä kuin tuntuu.', 'Täysikuu tuo asioita päivänvaloon: totuuden, tuloksen tai ihmisen; juhli kypsynyttä ja päästä irti kypsymättömästä.', 'Vähenevä kuperakuu on jakamisen ja kiitollisuuden aikaa; välitä eteenpäin, mitä olet oppinut.', 'Viimeinen neljännes pyytää päästämään irti tavoista, lupauksista ja sotkusta, jotka eivät enää palvele.', 'Vähenevä sirppi on levon aikaa; lempeät päätökset tekevät tilaa uudelle kierrokselle.'],
+  ord: h => ['ensimmäisessä', 'toisessa', 'kolmannessa', 'neljännessä', 'viidennessä', 'kuudennessa', 'seitsemännessä', 'kahdeksannessa', 'yhdeksännessä', 'kymmenennessä', 'yhdestoista', 'kahdestoista'][h - 1],
+  adv: [
+    'Aseta itsesi hetkeksi etusijalle: selkeys alkaa siitä, mitä todella haluat.',
+    'Tarkista, mitkä asiat ovat sinulle todella arvokkaita, ennen kuin sitoudut, kulutat tai luovutat.',
+    'Sano ajatuksesi ääneen tai kirjoita se ylös. Sanat voivat avata enemmän kuin arvaat.',
+    'Pienet, toimivat rituaalit tekevät enemmän kuin suurin piirtein suunnitellut projektit.',
+    'Anna itsellesi tilaa luovuuteen – ilo, leikki ja rakkaus voivat myös olla käytännöllisiä ratkaisuja.',
+    'Järjestä yksi pieni asia, joka helpottaa arkea. Pieni selkeys avaavat tilaa suuremmalle.',
+    'Kuuntele tarkasti. Toisen sanoma voi sisältää juuri sen, mitä olet kaivannut.',
+    'Katso suoraan siihen, mikä on vielä kesken. Rehellinen selvittely tuo helpotusta.',
+    'Laajenna horisonttia: kirja, matkakohde, uusi näkökulma tai rohkeampi idea voi tuoda virtaa.',
+    'Näytä, mitä osaat. Ponnistelusi näkyvät, ja oikea tavoite tekee työstä merkityksellistä.',
+    'Lepää ilman syyllisyyttä. Tauko ei ole laiskuutta, vaan osa oikeaa rytmiä.',
+    'Anna itsellesi hiljaisuutta ja rauhaa. Vastaukset tulevat usein silloin, kun et enää pakene niitä.'
+  ],
+  retroP: [
+    '',
+    '',
+    ' Merkurius perääntyy: lue viestit uudelleen, ota varmuuskopiot ja varaudu vanhojen keskustelujen palaamiseen.',
+    ' Venus perääntyy: vanhat tunteet ja maut palaavat, joten odota suurten rakkaus- ja rahapäätösten kanssa.',
+    ' Mars perääntyy: tarmo kääntyy sisäänpäin; etene hitaasti ja selvitä, mikä vielä ansaitsee vaivan.',
+    ' Jupiter perääntyy: kasvu kääntyy sisäänpäin; palaa suunnitelmaan tai uskomukseen, josta olet kasvanut ulos.',
+    ' Saturnus perääntyy: sitoumuksesi tarkastetaan; rakenna uudelleen se, mikä on heikkoa, äläkä lisää uutta.'
+  ],
+  fcL: 'Ennuste',
+  moonL: 'Kuun vaiheet',
+  fcOpen: [
+    'Oinas toimii vahvasti omasta impulssistaan, ja tämä kausi palkitsee rohkean aloituksen – mutta muista, ettei aina tarvitse hypätä ennen kuin on valmis.',
+    'Härkä tarvitsee rytmiä ja turvallisuuden tunnetta, ja tämä kausi kannattaa käyttää siihen, että rakennat kestävää perustaa ilman kiirehtimistä.',
+    'Kaksosen mieli virtaa ajatusten, ideoiden ja yhteyksien keskellä. Nyt on hyvä hetki koota ajatukset ja kertoa ne selkeästi.',
+    'Rapu kuuntelee enemmän kuin puhuu, ja juuri nyt sen on hyvä nähdä, mitä omat tunteet todella vaativat.',
+    'Leijona tarvitsee tilaa olla omana itsenään ilman jatkuvaa valvontaa. Tämä kausi kannustaa autenttisuuteen.',
+    'Neitsyt löytää selkeyden pienistä yksityiskohdista. Yksi tarkka säätö voi tehdä suuren eron.',
+    'Vaaka pyrkii löytämään tasapainon, mutta tässä jaksossa kannattaa kysyä: onko rauha tullut omasta valinnasta vai toisten miellyttämisestä?',
+    'Skorpioni tunnistaa pinnan alla olevan totuuden. Se, mikä jää piiloon, saa nyt oikean äänen.',
+    'Jousimies kaipaa vapautta, mutta myös suuntaa ja tarkoitusta. Se, mikä tuntuu vapaalta, voi samalla myös auttaa eteenpäin.',
+    'Kauris rakentaa hiljaa mutta kestävää. Tämä kausi on hyvä siihen, että huomaat, kuinka paljon on jo tapahtunut.',
+    'Vesimies näkee mahdollisuuksia ja kokoaa tulevaisuudenkuvan. Nyt kannattaa kuunnella omia intuitioita sekä uusia yhteyksiä.',
+    'Kalat tarvitsevat rauhaa ja syvyyttä. Tämä kausi kutsuu antamaan unelmalle hieman konkreettista jalansijaa.'
+  ],
+  fcPlanet: [
+    'Aurinko valottaa sinua juuri siinä kohdassa, missä tarvitset eniten omaa ääntäsi ja itseluottamusta.',
+    'Kuu asettaa tunnelman, joten tunteet ovat tässä jaksossa tärkeä viesti – kuuntele niitä, älä pakene niitä.',
+    'Merkurius kirkastaa puhetta, päätöksiä, yhteydenpitoa ja pieniä käytännön tehtäviä.',
+    'Venus pehmentää tilanteita ja tuo esiin rakkauden, arvostuksen sekä sen, mikä tuntuu hyvältä.',
+    'Mars tuo energiaa, mutta myös vaatii valintoja: mihin käytät voimasi, milloin pysäytät itsesi?',
+    'Jupiter laajentaa näkökulmaa ja avaa uusia mahdollisuuksia, kun olet tarpeeksi utelias.',
+    'Saturnus testaa, mikä kestää. Ponnistus, joka tehdään aitoudella ja kärsivällisyydellä, kantaa pitkälle.'
+  ],
+  fcHouse: [
+    'Huomio kääntyy sinuun: omiin tarpeisiisi, energiaasi ja tapaan, jolla aloitat asiat.',
+    'Raha, arvojärjestys ja itsensä kunnioitus nousevat keskiöön.',
+    'Viestintä, oppiminen ja arkiset yhteydet saavat uusia sävyjä.',
+    'Koti, perhe, juuret ja turvallisuuden tunne tulevat keskiöön.',
+    'Luovuus, rakkaus ja ilo vaativat tilaa ja näkyvyyttä.',
+    'Arki, terveys ja omat rutiinit vaativat tarkkaa, rehellistä katsomista.',
+    'Kumppanuudet, tasavertaisuus ja lähellä olevat suhteet nousevat esiin.',
+    'Jaetut resurssit, luottamus ja rohkea selvittely voivat muuttaa paljon.',
+    'Uudet näkökulmat, matkailu, opiskelu ja uskomukset kutsuvat sinua laajentumaan.',
+    'Ura, maine ja näkyvyys nousevat esiin, ja toiminta tulee katsotuksi.',
+    'Ystävät, verkostot ja suuremmat tavoitteet saavat uuden vaiheen.',
+    'Lepo, hiljaisuus ja sisäinen tila ovat yhtä tärkeitä kuin toiminta.'
+  ],
+  fcMoon: [
+    'Uusikuu on hyvä hetki asettaa selkeä tahtotila. Valitse yksi asia, jota haluat kehittää rauhallisesti.',
+    'Kasvava sirppi suosii pieniä, toimivia askeleita. Aloita siitä, mikä on mahdollista heti tänään.',
+    'Ensimmäinen neljännes tuo haasteen – juuri se kertoo, kuinka paljon asia todella merkitsee sinulle.',
+    'Kasvava kuperakuu palkitsee kärsivällisyyden, viimeistelyn ja tarkan työn.',
+    'Täysikuu tuo asiat valoon. Jokin päätyy näkyviin, tai jokin tulee kypsäksi ja vaatii päätöstä.',
+    'Vähenevä kuperakuu on hyvä jakamisen ja kiitollisuuden aikaan. Jaa oppimasi ja päästä irti turhasta.',
+    'Viimeinen neljännes kysyy, mitä saat päästää irti, jotta tilaa jää uudelle.',
+    'Vähenevä sirppi kutsuu lepäämään ja rauhoittumaan. Hyvä päätös on usein myös lempeä päätös.'
+  ],
   fcAsp: ['sulautuvat yhteen', 'tekevät yhteistyötä', 'vetävät eri suuntiin', 'virtaavat yhdessä', 'kohtaavat vastakkain'],
   fcBeneath: (a, b, v) => `Taustalla ${a} ja ${b} ${v}.`,
-  fcClose: ['Rohkeuteen kuuluu tieto siitä, milloin kuunnella.', 'Vakaus on voimavara eikä pysähtyneisyyttä, joten salli itsellesi nautintoa.', 'Kaikkea ei tarvitse ymmärtää kerralla; yksi lanka kerrallaan riittää.', 'Sinun ei tarvitse kantaa kaikkien tunteita, vain omasi.', 'Lämmin sana toiselle palaa takaisin kirkkaampana.', 'Riittävän hyvä on useimmiten juuri oikein.', 'Sinun mielipiteesi painaa yhtä paljon kuin kenen tahansa muun.', 'Luottamus rakentuu hitaasti, ja sinä päätät tahdin.', 'Matka on yhtä arvokas kuin päämäärä, ja kotiin saa aina palata.', 'Lepo ei ole laiskuutta vaan osa rakentamista.', 'Idea tulee todeksi vasta, kun kerrot sen jollekulle.', 'Tunteesi ovat tietoa, ja rajat suojaavat herkkyyttäsi.'],
+  fcClose: [
+    'Rohkeus ei ole vain toimimista, vaan myös taitoa kuunnella, kun vahva impulssi vaatii hidastamista.',
+    'Vakaus on voima, ei pysähtymistä. Anna itsellesi myös nautintoa.',
+    'Et tarvitse kaikkia vastauksia heti. Yksi selvä askel kerrallaan riittää.',
+    'Sinun ei tarvitse kantaa kaikkien tunteita. Pidä huolta omasta sisäisestä tilastasi.',
+    'Lämmin sana ja kunnioittava ele voivat muuttaa paljon enemmän kuin arvaat.',
+    'Riittävän hyvä on usein juuri sopiva ja kestävä ratkaisu.',
+    'Oma mielipiteesi on yhtä arvokas kuin kenen tahansa muun.',
+    'Luottamus rakentuu hiljaa ja kestää vain, jos annat sen kasvaa rauhassa.',
+    'Matka on osa tavoitteita, eikä kaikkea tarvitse pitää vain määränpäänä.',
+    'Lepo on osa toimintaa, ei sen vastakohta.',
+    'Idea muuttuu todellisuudeksi, kun se kerrotaan ääneen ja jaetaan.',
+    'Tunteet ovat tietoa, mutta rajat tekevät niistä terveen, vahvan tiedon.'
+  ],
   pline: (g, p, s, h, a) => `${g} ${p} (${s}) kulkee ${h}.`,
   hs: (o, a) => `${o} huoneessasi – ${a}`,
   aspN: ['yhtyy', 'tukee', 'haastaa', 'virtaa yhdessä', 'vastustaa'],
@@ -114,24 +369,70 @@ fi: {
     ['Jupiteriin', 'Jupiteria', 'Jupiterin'],
     ['Saturnukseen', 'Saturnusta', 'Saturnuksen']
   ],
-  aspT: ['niiden teemat sulautuvat ja vahvistavat toisiaan.', 'lempeä aukeama – pieni ponnistus palkitaan.', 'kitka, joka vaatii päätöksen.', 'asiat sujuvat helposti; älä haaskaa tilaisuutta.', 'kaksi puolta punnittavana, kunnes löydät tasapainon.'],
+  aspT: [
+    'niiden teemat sulautuvat ja vahvistavat toisiaan.',
+    'lempeä aukeama – pieni ponnistus palkitaan.',
+    'kitka, joka vaatii päätöksen.',
+    'asiat sujuvat helposti; älä haaskaa tilaisuutta.',
+    'kaksi puolta punnittavana, kunnes löydät tasapainon.'
+  ],
   phase: ['Uusikuu', 'Kasvava sirppi', 'Ensimmäinen neljännes', 'Kasvava kuperakuu', 'Täysikuu', 'Vähenevä kuperakuu', 'Viimeinen neljännes', 'Vähenevä sirppi'],
   phaseT: ['Hyvä hetki istuttaa aikomus.', 'Ota ensimmäinen käytännön askel.', 'Päätökset ja ponnistelu tuottavat nyt tulosta.', 'Hio, säädä ja jatka.', 'Asiat tulevat valoon; juhli tai päästä irti.', 'Jaa oppimaasi.', 'Päästä irti siitä, mikä ei enää toimi.', 'Lepää ja valmistaudu uuteen kiertoon.'],
   moonIn: (s, p) => `Kuu on merkissä ${s}, ${p}.`,
-  theme: ['Aloita itsestäsi', 'Arvosta sitä, mitä sinulla on', 'Puhu asia halki', 'Palaa juuriisi', 'Tee jotain ilon vuoksi', 'Järjestä yksi pieni asia', 'Tule toista vastaan', 'Päästä irti jostakin', 'Katso kauemmas', 'Näytä, mitä osaat', 'Ota yhteyttä ystäviin', 'Hidasta ja lepää'],
-  ques: [['Mitä aloittaisin tänään, jos en pelkäisi?', 'Missä kiirehdin, ja mitä kärsivällisyys paljastaisi?', 'Kenen taistelua käyn, vaikka se ei ole omani?'], ['Mistä pienestä, vakaasta asiasta olisin ylpeä?', 'Mistä pidän kiinni tottumuksesta enkä rakkaudesta?', 'Millainen olisi todella mukava päiväni?'], ['Kenen pitäisi kuulla, mitä ajattelen?', 'Mikä monista ideoistani ansaitsee kokonaisen viikon?', 'Mitä kysymystä vältän pysymällä kiireisenä?'], ['Mitä todella tunnen pinnan alla?', 'Kenestä pidän huolta, ja kuka pitää huolta minusta?', 'Mitä koti minulle tällä hetkellä tarkoittaa?'], ['Missä voisin antaa tunnustusta sen hakemisen sijaan?', 'Mitä loisin, vaikka kukaan ei taputtaisi?', 'Kuka ansaitsee lämpöäni tänään?'], ['Mikä olisi riittävän hyvä, ja kenen vuoksi tavoittelen enemmän?', 'Mikä pieni tapa muuttaisi viikkoni?', 'Missä voin olla itselleni yhtä ystävällinen kuin muille?'], ['Missä valitsen rauhan rehellisyyden kustannuksella?', 'Mitä itse haluan, kun ei tarvitse miellyttää kaikkia?', 'Minkä päätöksen olen lykännyt liian pitkään?'], ['Mistä olen valmis päästämään irti?', 'Keneen luotan, ja miksi?', 'Mitä totuutta kierrän kehää?'], ['Mitä horisonttia kohti kuljen?', 'Mitä tekisin, jos tietäisin, etten voi epäonnistua?', 'Mitä viimeisin kiertotieni opetti?'], ['Mitä olen rakentanut ja unohtanut juhlia?', 'Missä lepo tekisi minusta tehokkaamman?', 'Mikä tavoite on omani, ja mikä vain odotettu?'], ['Mikä ideoistani kaipaa kokeilua oikeassa maailmassa?', 'Mihin haluan kuulua enkä vain erottua?', 'Kenet voisin kutsua mukaan suunnitelmiini?'], ['Mitä unelmani kertovat siitä, mitä haluan?', 'Missä tarvitsen rajan suojaamaan lempeyttäni?', 'Mikä pieni askel toisi unelman lähemmäs?']],
-  themeL: 'Teema', quesL: 'Pohdittavaksi',
+  theme: ['Aloita itsestäsi', 'Arvosta sitä, mitä sinulla on', 'Puhu asia halki', 'Palaa juuriisi', 'Tee jotain ilon vuoksi', 'Järjestä yksi pieni asia', 'Tee tasapainoa toisen kanssa', 'Päästä irti jostakin', 'Katso kauemmas', 'Näytä, mitä osaat', 'Lähesty ystäviä ja yhteyttä', 'Hidasta ja lepää'],
+  ques: [
+    ['Mitä aloittaisin tänään, jos pelkääminen ei pysäyttäisi minua?', 'Missä kiirehdin, ja mitä kärsivällisyys voisi paljastaa?', 'Kenen taistelua käyn, vaikka se ei ole minun?'],
+    ['Mistä pienestä, kestävästä asiasta voisin olla ylpeä?', 'Mihin pidän kiinni tottumuksen takia enemmän kuin rakkauden vuoksi?', 'Millainen päivä olisi todella hyvä juuri minulle?'],
+    ['Kenen pitäisi kuulla, mitä ajattelen?', 'Mikä ideoistani ansaitsee kokonaisen viikon?', 'Mitä kysymystä vältän, koska haluan pysyä kiireisenä?'],
+    ['Mitä tunnen syvemmällä tasolla?', 'Kenestä pidän huolta, ja kuka huolehtii minusta?', 'Mitä koti minulle nykyään merkitsee?'],
+    ['Missä voisin antaa tunnustusta sen sijaan, että yrittäisin jatkuvasti näyttää vahvalta?', 'Mitä loisin, jos kukaan ei olisi katsomassa?', 'Kuka ansaitsee lämpöäni tänään?'],
+    ['Mikä olisi riittävän hyvä, ja miksi yritän aina enemmän?', 'Mikä pieni tapa muuttaisi viikkoni suuntaa?', 'Missä voin olla itselleni yhtä ystävällinen kuin muille?'],
+    ['Missä valitsen rauhan rehellisyyden sijasta?', 'Mitä todella haluan, kun en tarvitse miellyttää kaikkia?', 'Minkä päätöksen olen lykännyt liian pitkään?'],
+    ['Mistä olen valmis luopumaan?', 'Keneen voin luottaa, ja miksi?', 'Mitä totuutta olen kiertänyt?'],
+    ['Mitä horisonttia kohti menen?', 'Mitä tekisin, jos tietäisin, ettei epäonnistuminen olisi mahdollista?', 'Mitä viimeisin harha tai kiertotie minulle opetti?'],
+    ['Mitä olen rakentanut ja unohtanut juhlia?', 'Missä lepo tekisi minusta tehokkaamman?', 'Mikä tavoite on täysin minun omani?'],
+    ['Mikä ideoistani tarvitsee käytännön kokeilun?', 'Mihin haluan kuulua, enkä vain erottua joukosta?', 'Kenet voisin kutsua mukaan suunnitelmiini?'],
+    ['Mitä unelmani sanovat minulle?', 'Missä tarvitsen rajaa suojellakseni lempeyttäni?', 'Mikä pieni askel voisi tehdä unelmasta lähempänä?']
+  ],
+  themeL: 'Teema',
+  quesL: 'Pohdittavaksi',
   areas: ['Rakkaus', 'Työ', 'Raha', 'Kasvu'],
-  arT: [['Pidä odotukset kevyinä ja ystävällisinä.', 'Lämpö on tasaista; näytä se.', 'Romantiikka ja charmi ovat suosiossa.'], ['Rytmitä tekemistä ja vältä kitkaa.', 'Tasainen työ huomataan.', 'Tarmo ja aloitteellisuus avaavat ovia.'], ['Varo heräteostoksia.', 'Tasapainoinen – suunnittele ennen ostoa.', 'Hyvä ajoitus järkeville riskeille.'], ['Hidas jakso; kärsivällisyys on oppi.', 'Pienet tavat vievät eteenpäin.', 'Aika todelliselle sisäiselle kasvulle.']],
-  luckyL: 'Onnenasiat', numL: 'numero', colL: 'väri', stL: 'kivi', dayL: 'päivä',
-  strL: 'Vahvuudet', chaL: 'Haasteet', datesL: 'Ajankohta', eleL: 'Alkuaine', modL: 'Laatu', rulL: 'Hallitsija', rulM: 'moderni', rulT: 'perinteinen',
-  pickTwo: 'Valitse kaksi merkkiä', mScore: ['Rakkaus', 'Ystävyys', 'Viestintä'],
-  dist: ['Sama merkki: peili, turvallinen ja joskus liian tuttu.', 'Naapurit: hyvin erilaiset rytmit, vaatii kärsivällisyyttä ja uteliaisuutta.', 'Sekstiili: ystävällinen, helppo yhteistyö ja yhteiset kiinnostuksen kohteet.', 'Neliö: vahva kipinä ja kitka; kasvu syntyy ponnistelusta.', 'Trigoni: luonnollinen ymmärrys ja yhteinen keveys.', 'Kvinkunssi: outo pari, joka joutuu jatkuvasti mukautumaan.', 'Vastakohdat: magneettinen veto, joka tasapainottaa toistensa aukkoja.'],
-  elRel: ['Sama alkuaine – koette maailman samalla tavalla.', 'Sopivat alkuaineet – ruokitte toisianne.', 'Eri alkuaineet – tulkitkaa toistenne tyyliä.'],
+  arT: [
+    ['Pidä odotukset kevyinä ja ystävällisinä.', 'Lämpö on tasaista; näytä se.', 'Romantiikka ja charmi ovat suosiossa.'],
+    ['Rytmitä tekemistä ja vältä kitkaa.', 'Tasainen työ huomataan.', 'Tarmo ja aloitteellisuus avaavat ovia.'],
+    ['Varo heräteostoksia.', 'Tasapainoinen – suunnittele ennen ostoa.', 'Hyvä ajoitus järkeville riskeille.'],
+    ['Hidas kausi; kärsivällisyys on oppi.', 'Pienet tavat vievät eteenpäin.', 'Aika todelliselle sisäiselle kasvulle.']
+  ],
+  luckyL: 'Onnenasiat',
+  numL: 'numero',
+  colL: 'väri',
+  stL: 'kivi',
+  dayL: 'päivä',
+  strL: 'Vahvuudet',
+  chaL: 'Haasteet',
+  datesL: 'Ajankohta',
+  eleL: 'Alkuaine',
+  modL: 'Laatu',
+  rulL: 'Hallitsija',
+  rulM: 'moderni',
+  rulT: 'perinteinen',
+  pickTwo: 'Valitse kaksi merkkiä',
+  mScore: ['Rakkaus', 'Ystävyys', 'Viestintä'],
+  dist: [
+    'Sama merkki: peili, turvallinen ja joskus liian tuttu.',
+    'Naapurit: hyvin erilaiset rytmit, vaatii kärsivällisyyttä ja uteliaisuutta.',
+    'Sekstiili: ystävällinen, helppo yhteistyö ja yhteiset kiinnostuksen kohteet.',
+    'Neliö: vahva kipinä ja kitka; kasvu syntyy ponnistelusta.',
+    'Trigoni: luonnollinen ymmärrys ja yhteinen keveys.',
+    'Kvinkunssi: outo pari, joka joutuu jatkuvasti mukautumaan.',
+    'Vastakohdat: magneettinen veto, joka tasapainottaa toistensa aukkoja.'
+  ],
+  elRel: ['Sama alkuaine – koette maailman samalla tavalla.', 'Sopivat alkuaineet – ruokitte toisiaan.', 'Eri alkuaineet – tulkitsette toistenne tyyliä.'],
   learn: [
     ['Alkuaineet', 'Tuli (Oinas, Leijona, Jousimies) toimii, Maa (Härkä, Neitsyt, Kauris) rakentaa, Ilma (Kaksonen, Vaaka, Vesimies) ajattelee ja yhdistää, Vesi (Rapu, Skorpioni, Kalat) tuntee.'],
     ['Laadut', 'Aloittavat merkit avaavat vuodenajat ja hankkeet, vakaat ylläpitävät, muuttuvat mukautuvat ja päättävät vuodenajat.'],
-    ['Planeetan perääntyminen', 'Planeetta näyttää Maasta katsoen liikkuvan taaksepäin. Symbolisesti: tarkista, mieti uudelleen, tee uudelleen. Tunnetuin on Merkuriuksen retrogradi.'],
+    ['Planeetat', 'Aurinko = identiteetti, Kuu = tunteet, Merkurius = mieli, Venus = rakkaus ja arvot, Mars = tarmo, Jupiter = kasvu, Saturnus = rakenne. Perinteinen hallitseminen käyttää seitsemää näkyvää planeettaa; moderni astrologia lisää Uranuksen, Neptunuksen ja Pluton.'],
+    ['Peräntymät', 'Planeetta vaikuttaa tulevan Maasta katsottuna taaksepäin. Symbolisesti se kutsuu tarkistamaan, miettimään uudelleen ja tekemään uudelleen. Tunnetuin on Merkuriuksen retrogradio.'],
     ['Huoneet', 'Aurinkomerkkihoroskoopeissa käytetään merkkihuoneita omasta merkistä laskien: oma merkkisi on 1. huone, seuraava merkki 2. huone ja niin edelleen. Kulkeva planeetta valaisee kyseistä elämänaluetta.'],
     ['Aspektit', 'Planeettojen väliset kulmat: yhtymä 0° (sulautuminen), sekstiili 60° (helppous), neliö 90° (jännite), trigoni 120° (virtaus), oppositio 180° (tasapaino).'],
     ['Trooppinen eläinrata', 'Sovellus käyttää trooppista eläinrataa: merkit alkavat maaliskuun päiväntasauksesta, eivät tähtikuvioista.'],
@@ -166,7 +467,6 @@ function aspects(pl, skipMoon) {
 }
 
 const fmtD = (d, lang) => lang === 'fi' ? `${d.getDate()}.${d.getMonth() + 1}.` : `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getDate()}`;
-/* Main moon phases (new, first quarter, full, last quarter) between start and start+days */
 function moonEvents(start, days) {
   const end = new Date(start.getTime() + days * 864e5), out = [];
   let q = AE.SearchMoonQuarter(start);
@@ -187,8 +487,15 @@ function compat(a, b) {
   const dist = Math.min((a - b + 12) % 12, (b - a + 12) % 12);
   const base = [70, 55, 80, 58, 92, 50, 75][dist];
   const ea = a % 4, eb = b % 4, same = ea === eb, good = (ea + eb) % 2 === 0 && !same;
-  return { dist, rel: same ? 0 : good ? 1 : 2,
-    s: [clamp(base + (good ? 5 : 0), 35, 98), clamp(base + (dist % 2 === 0 ? 5 : -3), 35, 98), clamp(base + (ea === 2 || ea === 0 ? 6 : 0) + (a === b ? 4 : 0), 35, 98)] };
+  return {
+    dist,
+    rel: same ? 0 : good ? 1 : 2,
+    s: [
+      clamp(base + (good ? 5 : 0), 35, 98),
+      clamp(base + (dist % 2 === 0 ? 5 : -3), 35, 98),
+      clamp(base + (ea === 2 || ea === 0 ? 6 : 0) + (a === b ? 4 : 0), 35, 98)
+    ]
+  };
 }
 
 /* ---------- UI ---------- */
@@ -201,9 +508,14 @@ function wheel(pl, sign, T) {
   let s = `<svg viewBox="0 0 300 300" width="100%" role="img" aria-label="${T.sky}"><circle cx="150" cy="150" r="140" fill="#2a1a4a" stroke="#dcb36c" stroke-width="1.5"/>`;
   const w0 = pt(sign * 30, 138), w1 = pt(sign * 30 + 30, 138), i0 = pt(sign * 30, 98), i1 = pt(sign * 30 + 30, 98);
   s += `<path d="M${w0} A138 138 0 0 0 ${w1} L${i1} A98 98 0 0 1 ${i0}Z" fill="#dcb36c" opacity=".28"/><circle cx="150" cy="150" r="98" fill="#150d26" stroke="#dcb36c" stroke-width="1"/>`;
-  for (let i = 0; i < 12; i++) { const [x, y] = pt(i * 30, 98), [x2, y2] = pt(i * 30, 140), [gx, gy] = pt(i * 30 + 15, 119);
-    s += `<line x1="${x}" y1="${y}" x2="${x2}" y2="${y2}" stroke="#5a4682"/><text x="${gx}" y="${gy + 6}" text-anchor="middle" font-size="19" fill="#dcb36c">${SG[i]}</text>`; }
-  pl.forEach(p => { const [x, y] = pt(p.lon, 80 - (p.i % 3) * 13); s += `<circle cx="${x}" cy="${y}" r="9" fill="#33215a" stroke="#f1d595"/><text x="${x}" y="${y + 5}" text-anchor="middle" font-size="13" fill="#f1d595">${PG[p.i]}</text>`; });
+  for (let i = 0; i < 12; i++) {
+    const [x, y] = pt(i * 30, 98), [x2, y2] = pt(i * 30, 140), [gx, gy] = pt(i * 30 + 15, 119);
+    s += `<line x1="${x}" y1="${y}" x2="${x2}" y2="${y2}" stroke="#5a4682"/><text x="${gx}" y="${gy + 6}" text-anchor="middle" font-size="19" fill="#dcb36c">${SG[i]}</text>`;
+  }
+  pl.forEach(p => {
+    const [x, y] = pt(p.lon, 80 - (p.i % 3) * 13);
+    s += `<circle cx="${x}" cy="${y}" r="9" fill="#33215a" stroke="#f1d595"/><text x="${x}" y="${y + 5}" text-anchor="middle" font-size="13" fill="#f1d595">${PG[p.i]}</text>`;
+  });
   return s + '<circle cx="150" cy="150" r="3" fill="#dcb36c"/></svg>';
 }
 
@@ -211,7 +523,6 @@ function signPicker(key, T) {
   return `<div class="signs" role="group" aria-label="${T.pick}">` + SG.map((g, i) =>
     `<button type="button" class="chip${S[key] === i ? ' on' : ''}" aria-pressed="${S[key] === i}" data-k="${key}" data-v="${i}"><b>${g}</b>${T.signs[i]}</button>`).join('') + '</div>';
 }
-
 
 /* Longer, composed forecast: sign voice + lead planets in the user's houses + moon phase + strongest aspect */
 function forecast(T, pl, sg, show, key, pi, moon, per) {
@@ -248,16 +559,21 @@ function reading(T) {
   if (!ev.length) h += `<p>${PG[1]} ${T.moonIn(T.signs[moon.sign], T.phase[pi].toLowerCase())} ${T.phaseT[pi]}</p>`;
   else h += `<h3>${T.moonL}</h3>` + ev.map(e => `<p>${PG[1]} <b>${fmtD(e.date, S.lang)}</b> – ${T.phase[e.idx]} (${T.signs[e.sign]}). ${T.phaseT[e.idx]}</p>`).join('');
   h += `<h3>${T.sky}</h3>`;
-  show.forEach(i => { const p = pl[i], hh = houseOf(p.sign, sg);
-    h += `<p>${T.pline(PG[i], T.pl[i], T.signs[p.sign], T.hs(T.ord(hh), T.house[hh - 1]))} ${T.adv[hh - 1]}${p.retro ? T.retroP[i] : ''}</p>`; });
+  show.forEach(i => {
+    const p = pl[i], hh = houseOf(p.sign, sg);
+    h += `<p>${T.pline(PG[i], T.pl[i], T.signs[p.sign], T.hs(T.ord(hh), T.house[hh - 1]))} ${T.adv[hh - 1]}${p.retro ? T.retroP[i] : ''}</p>`;
+  });
   aspects(pl, S.per !== 0).forEach(x => {
     const A = pl[x.a], B = pl[x.b];
-    h += `<p>${PG[A.i]} ${T.pl[A.i]} ${T.aspN[x.k]} ${PG[B.i]} ${T.plC ? T.plC[B.i][T.aspC[x.k]] : T.pl[B.i]}${T.aspPost ? T.aspPost[x.k] : ''}: ${T.kw[A.i]} ↔ ${T.kw[B.i]} – ${T.aspT[x.k]}</p>`; });
+    h += `<p>${PG[A.i]} ${T.pl[A.i]} ${T.aspN[x.k]} ${PG[B.i]} ${T.plC ? T.plC[B.i][T.aspC[x.k]] : T.pl[B.i]}${T.aspPost ? T.aspPost[x.k] : ''}: ${T.kw[A.i]} ↔ ${T.kw[B.i]} – ${T.aspT[x.k]}</p>`;
+  });
   h += `<h3>${T.fcL}</h3>` + forecast(T, pl, sg, show, key, fpi, moon, S.per);
   h += `<h3>${T.areas.join(' · ')}</h3>`;
-  [3, 4, 5, 6].forEach((pi2, n) => { const p = pl[pi2], hh = houseOf(p.sign, sg);
+  [3, 4, 5, 6].forEach((pi2, n) => {
+    const p = pl[pi2], hh = houseOf(p.sign, sg);
     const r = clamp(3 + (GOOD.includes(hh) ? 1 : 0) - (HARD.includes(hh) ? 1 : 0) - (p.retro ? 1 : 0) + (p.sign % 4 === sg % 4 ? 1 : 0), 1, 5);
-    h += `<p><b>${T.areas[n]}</b> ${stars(r)}<br>${T.arT[n][r <= 2 ? 0 : r === 3 ? 1 : 2]}</p>`; });
+    h += `<p><b>${T.areas[n]}</b> ${stars(r)}<br>${T.arT[n][r <= 2 ? 0 : r === 3 ? 1 : 2]}</p>`;
+  });
   const hv = hash(key), wd = new Date(base.getTime() + (hv % 7) * 864e5).getDay();
   h += `<h3>${T.luckyL}</h3><div class="lucky"><span>${T.numL}: ${1 + hv % 9}</span><span>${T.colL}: ${T.col[(moon.sign + sg) % 12]}</span><span>${T.stL}: ${T.stone[sg]}</span><span>${T.dayL}: ${T.day[wd]}</span></div>`;
   return h + `<p class="note">${T.disc}</p></div></div>`;
@@ -266,7 +582,10 @@ function reading(T) {
 function signPage(T) {
   const i = S.sign, [s, c] = T.tr[i].split('|'), r = RUL[i], lang = S.lang;
   const st = SIGN_START[i], en = SIGN_START[(i + 1) % 12];
-  const fmt = m => { const [mm, dd] = m.split('-'); return lang === 'fi' ? `${+dd}.${+mm}.` : `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mm - 1]} ${+dd}`; };
+  const fmt = m => {
+    const [mm, dd] = m.split('-');
+    return lang === 'fi' ? `${+dd}.${+mm}.` : `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mm - 1]} ${+dd}`;
+  };
   const [dm, dt] = [T.rl[r[0]], T.rl[r[1]]];
   return `<div class="card"><div class="big">${SG[i]}</div><h2>${T.signs[i]}</h2>
 <p>${T.sd(T.signs[i], T.el[i % 4], T.mo[i % 3], r[0] === r[1] ? dm : dm + ' / ' + dt)} ${T.elT[i % 4]} ${T.moT[i % 3]}</p>
