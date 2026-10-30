@@ -81,12 +81,23 @@ fi: {
   moT: ['Aloittavana merkkinä se käynnistää asioita.', 'Vakaana merkkinä se pysyy lujana ja vie alkamansa loppuun.', 'Muuttuvana merkkinä se mukautuu ja oppii matkan varrella.'],
   sd: (n, el, mo, r) => `${n} on ${mo.toLowerCase()} ${el.toLowerCase()}merkki, jota hallitsee ${r}.`,
   house: ['minä ja elinvoima', 'raha ja arvot', 'viestintä ja oppiminen', 'koti ja juuret', 'luovuus ja romantiikka', 'terveys ja arki', 'kumppanuudet', 'jaetut resurssit ja muutos', 'matkat ja uskomukset', 'ura ja maine', 'ystävät ja toiveet', 'lepo ja sisäinen elämä'],
-  ord: h => h + '.',
+  ord: h => ['ensimmäisessä', 'toisessa', 'kolmannessa', 'neljännessä', 'viidennessä', 'kuudennessa', 'seitsemännessä', 'kahdeksannessa', 'yhdeksännessä', 'kymmenennessä', 'yhdennessätoista', 'kahdennessatoista'][h - 1],
   adv: ['Luota pieniin viesteihin.', 'Etene tasaisesti, älä kiirehtien.', 'Keskustelu voi selkeyttää tilanteen.', 'Suojele energiaasi ja rytmitä tekemisesi.', 'Sano kyllä yhdelle innostavalle asialle.', 'Saata jokin loppuun ennen uutta alkua.'],
-  retro: ' Se on retrogradinen, joten tarkista ja korjaa ennen kuin painat eteenpäin.',
-  pline: (g, p, s, h, a) => `${g} ${p} (${s}) kulkee huoneessasi ${h}.`,
-  hs: (o, a) => `${o} huone – ${a}`,
+  retro: ' Se on retrogradissa, joten tarkista ja korjaa ennen kuin painat eteenpäin.',
+  pline: (g, p, s, h, a) => `${g} ${p} (${s}) kulkee ${h}.`,
+  hs: (o, a) => `${o} huoneessasi – ${a}`,
   aspN: ['yhtyy', 'tukee', 'haastaa', 'virtaa yhdessä', 'vastustaa'],
+  aspC: [0, 1, 2, 2, 1], // sijamuoto: 0 illatiivi, 1 partitiivi, 2 genetiivi
+  aspPost: ['', '', '', ' kanssa', ''],
+  plC: [
+    ['Aurinkoon', 'Aurinkoa', 'Auringon'],
+    ['Kuuhun', 'Kuuta', 'Kuun'],
+    ['Merkuriukseen', 'Merkuriusta', 'Merkuriuksen'],
+    ['Venukseen', 'Venusta', 'Venuksen'],
+    ['Marsiin', 'Marsia', 'Marsin'],
+    ['Jupiteriin', 'Jupiteria', 'Jupiterin'],
+    ['Saturnukseen', 'Saturnusta', 'Saturnuksen']
+  ],
   aspT: ['niiden teemat sulautuvat ja vahvistavat toisiaan.', 'lempeä aukeama – pieni ponnistus palkitaan.', 'kitka, joka vaatii päätöksen.', 'asiat sujuvat helposti; älä haaskaa tilaisuutta.', 'kaksi puolta punnittavana, kunnes löydät tasapainon.'],
   phase: ['Uusikuu', 'Kasvava sirppi', 'Ensimmäinen neljännes', 'Kasvava kuperakuu', 'Täysikuu', 'Vähenevä kuperakuu', 'Viimeinen neljännes', 'Vähenevä sirppi'],
   phaseT: ['Hyvä hetki istuttaa aikomus.', 'Ota ensimmäinen käytännön askel.', 'Päätökset ja ponnistelu tuottavat nyt tulosta.', 'Hio, säädä ja jatka.', 'Asiat tulevat valoon; juhli tai päästä irti.', 'Jaa oppimaasi.', 'Päästä irti siitä, mikä ei enää toimi.', 'Lepää ja valmistaudu uuteen kiertoon.'],
@@ -189,7 +200,7 @@ function reading(T) {
     h += `<p>${T.pline(PG[i], T.pl[i], T.signs[p.sign], T.hs(T.ord(hh), T.house[hh - 1]))} ${T.adv[(hh * 7 + i) % 6]}${p.retro ? T.retro : ''}</p>`; });
   aspects(show.length ? pl.filter((p, i) => S.per === 0 || i !== 1) : pl, S.per !== 0).forEach(x => {
     const A = pl[x.a], B = pl[x.b];
-    h += `<p>${PG[A.i]} ${T.pl[A.i]} ${T.aspN[x.k]} ${PG[B.i]} ${T.pl[B.i]}: ${T.kw[A.i]} ↔ ${T.kw[B.i]} – ${T.aspT[x.k]}</p>`; });
+    h += `<p>${PG[A.i]} ${T.pl[A.i]} ${T.aspN[x.k]} ${PG[B.i]} ${T.plC ? T.plC[B.i][T.aspC[x.k]] : T.pl[B.i]}${T.aspPost ? T.aspPost[x.k] : ''}: ${T.kw[A.i]} ↔ ${T.kw[B.i]} – ${T.aspT[x.k]}</p>`; });
   h += `<h3>${T.areas.join(' · ')}</h3>`;
   [3, 4, 5, 6].forEach((pi2, n) => { const p = pl[pi2], hh = houseOf(p.sign, sg);
     const r = clamp(3 + (GOOD.includes(hh) ? 1 : 0) - (HARD.includes(hh) ? 1 : 0) - (p.retro ? 1 : 0) + (p.sign % 4 === sg % 4 ? 1 : 0), 1, 5);
